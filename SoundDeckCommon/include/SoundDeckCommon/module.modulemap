@@ -1,0 +1,4 @@
+module SoundDeckCommon {
+    header "SoundDeckCommon.h"
+    export *
+}

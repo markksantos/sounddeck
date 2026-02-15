@@ -1,0 +1,1109 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		025F14A58FF75893EDCDE1C1 /* AudioEngineManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160E252F1F772D1432B30072 /* AudioEngineManager.swift */; };
+		053391AFE3834728C8AA04D9 /* uh_huh_2.wav in Resources */ = {isa = PBXBuildFile; fileRef = ECC54156A9F64EB44EEC6ECF /* uh_huh_2.wav */; };
+		0786070124A7BDC77F067F2B /* VoiceChanger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 307B718795E0A3B31994F7CD /* VoiceChanger.swift */; };
+		0CB22F10C9E20D226C564D08 /* SoundStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 815667DA0C219B010624C333 /* SoundStore.swift */; };
+		0E9A3FDF234B4C9F25938CE2 /* FolderSidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868F7720CE64B41629572C63 /* FolderSidebarView.swift */; };
+		10E6AD023F0D995AEEE5B74C /* RingBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 523BFB3F20D74A5E34D61040 /* RingBuffer.c */; };
+		190FB2620D415C31B718A3E7 /* TrimEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA1C1DE8CC887C74DAB540DC /* TrimEditorView.swift */; };
+		2A05BC8B9673097D9AB90A2C /* SoundFolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B8EBEE2CE710FA72063BBB /* SoundFolder.swift */; };
+		3705047DFF6A51CCE8424C68 /* EventMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11D2CB4FAEBDC2A05F00503A /* EventMonitor.swift */; };
+		3A10D4A564B499A281FAEE57 /* SoundPadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC963021EAE9C9D7E93F1450 /* SoundPadView.swift */; };
+		3B20E524C808E41A1BDFA09D /* silence.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7178567BD9167232F086519B /* silence.wav */; };
+		3C2A63BAE508C8DC0F3ECD43 /* SupportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C35B9277BA234BDA9FE8EC0C /* SupportView.swift */; };
+		3CB94F9B1871014E39B6A639 /* libSoundDeckCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 264722B1D6D75C588B41CC34 /* libSoundDeckCommon.a */; };
+		4F0DE6561C72D3934B6F5E6D /* HotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A6C030F5DD816FEEFD3E339 /* HotkeyManager.swift */; };
+		4F43B1BD2091A4EDE8AA458E /* WatermarkPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 680ACAB11E8DD7F6A846A876 /* WatermarkPlayer.swift */; };
+		4FF212122FF2E9D73EE0FA89 /* PrivacyPolicyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B3E647ABB0783B0F3C134D /* PrivacyPolicyView.swift */; };
+		586B941A770F800CEA3BCE77 /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3769AE83CE74B431A47E3019 /* SubscriptionManager.swift */; };
+		5B0B7282346FF09E4A622CAD /* phone_ring.wav in Resources */ = {isa = PBXBuildFile; fileRef = 234A397B789AD500E7EC7BB7 /* phone_ring.wav */; };
+		5E0EB6E7C49FA52F04D03CB7 /* dog_bark.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3A7EF164C6F327DF60505FAB /* dog_bark.wav */; };
+		63300E4D26BDA785B28E448B /* WaveformView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F890EE8B6E7BFC9208407A47 /* WaveformView.swift */; };
+		688CD0BFDA3B450AF0C15A6D /* UpgradeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 940BC31D57CED35EC14DC218 /* UpgradeView.swift */; };
+		696413D17578ED9586273907 /* ProLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66EB48E630D4057D18F3E640 /* ProLibraryView.swift */; };
+		6C01D89FAE0EFE8A156D6E06 /* RingBufferTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D9D2B1D18B049433A484C26 /* RingBufferTests.swift */; };
+		7B731DB8A8EC43F3DB9CDA65 /* DriverInstaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4370F7F33A3831233F2FEF5 /* DriverInstaller.swift */; };
+		83C87A28FE5035671FC344ED /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A77DD26D438765B47A0D45C /* main.swift */; };
+		8637DFF0C07779C143A9669D /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 195D880419346D9E546FBD04 /* AppState.swift */; };
+		910C1883CF98271D24E098F7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B219E4AFE4C87EE839404A2 /* AppDelegate.swift */; };
+		9133222F6E54A8B412BB4869 /* SoundDeckApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CAB81C55BC831C508F1B84B /* SoundDeckApp.swift */; };
+		91A380AB30C2D6834CF008B3 /* TermsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FA201876F1E28698EBCCB19 /* TermsView.swift */; };
+		92151543B25CA064B51214BD /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 896A24C7A8956BD0D15D8E03 /* OnboardingView.swift */; };
+		9A32FB4D969203009418D53C /* hold_music.wav in Resources */ = {isa = PBXBuildFile; fileRef = FB77F4B88CF5B0FB70209C72 /* hold_music.wav */; };
+		A02161B668970896A019C10E /* libSoundDeckCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 264722B1D6D75C588B41CC34 /* libSoundDeckCommon.a */; };
+		A29776A861103EB17A8F03F4 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 3E308C555B2045C7D95E38DE /* Sparkle */; };
+		A619C201AA1A7F190CCF26B9 /* baby_cry.wav in Resources */ = {isa = PBXBuildFile; fileRef = 46BCAB8C92F578D38280412F /* baby_cry.wav */; };
+		AC45DD4DA7AB8093E2E6FCE5 /* SoundPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CE2D8279314EE3285365E1C /* SoundPlayer.swift */; };
+		B2113A505BCDE10098745228 /* SoundDeckDriver.bundle in Embed Dependencies */ = {isa = PBXBuildFile; fileRef = 2CB4FAC707FA4447957BAD43 /* SoundDeckDriver.bundle */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B2B4FCE9A9123640E5600435 /* PreviewEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7CBBFC01A600EFB808DFCF4 /* PreviewEngine.swift */; };
+		B3C85881DB1188DCCCAD4C69 /* AudioActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D2EAF388896B5DE280CEB1D /* AudioActions.swift */; };
+		B5E1AF5FDDDFAF9A5D8184B1 /* SharedMemoryWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4710C271DE3BDACE6B916F6 /* SharedMemoryWriter.swift */; };
+		B9620CC0B02F78D11A8D1B46 /* applause.wav in Resources */ = {isa = PBXBuildFile; fileRef = FA0F900E727F3D303B1BAB2A /* applause.wav */; };
+		BDABAF492EFA232A4CFAFAA5 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 4785C5CDC898D102AD82ED05 /* KeyboardShortcuts */; };
+		BE5A4A396726B911FA0DC2AD /* uh_huh_1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3B291225353C1D2466AE7D51 /* uh_huh_1.wav */; };
+		BF70A7A23F9FF6946A38504D /* static.wav in Resources */ = {isa = PBXBuildFile; fileRef = 55A53B0D79444925F64B1B63 /* static.wav */; };
+		C2FD2C9785122B646CDF8790 /* laugh_track.wav in Resources */ = {isa = PBXBuildFile; fileRef = 3485FC95000BD8E80EEAC766 /* laugh_track.wav */; };
+		C375238F2BC7EF32A374A459 /* HotkeyNames.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E8818EEA1EF2E8B10ED3BAA /* HotkeyNames.swift */; };
+		C79A529748C7A3CB8B2E0F94 /* libSoundDeckCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 264722B1D6D75C588B41CC34 /* libSoundDeckCommon.a */; };
+		C8F57035A63CEF2A551763FA /* VUMeterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8146982FAEF16516E8303D31 /* VUMeterView.swift */; };
+		D13BC4F5026AB5D2D59A41DF /* SoundGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 764EB2B51A97DC0E4A97BF30 /* SoundGridView.swift */; };
+		D8F17D9621EE05DE2BDA4B7B /* DriverEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74113D353B2C0DB649618BC9 /* DriverEntry.cpp */; };
+		DB3FA7839D4A17BA3CBFCDAE /* uh_huh_3.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8356FA405F15BDD0ECDFE882 /* uh_huh_3.wav */; };
+		DBB2CCB55D664E571FBCDB25 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42BF0630688075CA3B8433C9 /* SettingsView.swift */; };
+		DDF20CEBB3BEAE6B526B057B /* traffic.wav in Resources */ = {isa = PBXBuildFile; fileRef = 78BED27B82B9073DE18902C5 /* traffic.wav */; };
+		DF559DE261E0CDA3684D36E0 /* PopoverContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C63B0E63F6888C46D071E6 /* PopoverContentView.swift */; };
+		E3035B9B1F382D636EA82F4B /* SoundItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFBB3315EE9AC3DBC848CE23 /* SoundItem.swift */; };
+		E34E80166F5F3D9DE474CCE5 /* alarm.wav in Resources */ = {isa = PBXBuildFile; fileRef = AA0C8E40781B9240203D0B99 /* alarm.wav */; };
+		E4ECC51977E51407658DCAFA /* MyInstantsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4198E453B6CDF69136467462 /* MyInstantsService.swift */; };
+		EB2478EB7211952DE237F951 /* doorbell.wav in Resources */ = {isa = PBXBuildFile; fileRef = E46F4F68FF1BE139E0181882 /* doorbell.wav */; };
+		EF6B16334BEFE4D3D992289E /* SHMHelpers.c in Sources */ = {isa = PBXBuildFile; fileRef = 8BAFD5E8D7DB4FBA974A5CF9 /* SHMHelpers.c */; };
+		FA1FBDD657A8F98EBB9D2FF6 /* VoiceChangerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E92D17441E19956CCCF156B /* VoiceChangerView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		29DC31F16D97D8C3D4340F3F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B2FCA6556E79E983CDDD334 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 061B95012BB9F9EBF21C478F;
+			remoteInfo = SoundDeckCommon;
+		};
+		5F339704456D9D4A569A6511 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B2FCA6556E79E983CDDD334 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 061B95012BB9F9EBF21C478F;
+			remoteInfo = SoundDeckCommon;
+		};
+		9C5A5A0C20E0C6FF2990A391 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B2FCA6556E79E983CDDD334 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 061B95012BB9F9EBF21C478F;
+			remoteInfo = SoundDeckCommon;
+		};
+		D659612FD354766C8A53A405 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B2FCA6556E79E983CDDD334 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E7626C429B23D81666790A43;
+			remoteInfo = SoundDeckDriver;
+		};
+		E539783D922E8CF0E3F8A4C4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4B2FCA6556E79E983CDDD334 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A764E67666A5B8A61CD8BA9F;
+			remoteInfo = SoundDeck;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		703743C699CEBC1002895CDA /* Embed Dependencies */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+				B2113A505BCDE10098745228 /* SoundDeckDriver.bundle in Embed Dependencies */,
+			);
+			name = "Embed Dependencies";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0D9D2B1D18B049433A484C26 /* RingBufferTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RingBufferTests.swift; sourceTree = "<group>"; };
+		11D2CB4FAEBDC2A05F00503A /* EventMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMonitor.swift; sourceTree = "<group>"; };
+		160E252F1F772D1432B30072 /* AudioEngineManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioEngineManager.swift; sourceTree = "<group>"; };
+		195D880419346D9E546FBD04 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		1FA201876F1E28698EBCCB19 /* TermsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsView.swift; sourceTree = "<group>"; };
+		234A397B789AD500E7EC7BB7 /* phone_ring.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = phone_ring.wav; sourceTree = "<group>"; };
+		264722B1D6D75C588B41CC34 /* libSoundDeckCommon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libSoundDeckCommon.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		2A77DD26D438765B47A0D45C /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		2CB4FAC707FA4447957BAD43 /* SoundDeckDriver.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SoundDeckDriver.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D2EAF388896B5DE280CEB1D /* AudioActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioActions.swift; sourceTree = "<group>"; };
+		307B718795E0A3B31994F7CD /* VoiceChanger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceChanger.swift; sourceTree = "<group>"; };
+		3485FC95000BD8E80EEAC766 /* laugh_track.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = laugh_track.wav; sourceTree = "<group>"; };
+		3769AE83CE74B431A47E3019 /* SubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionManager.swift; sourceTree = "<group>"; };
+		3A6C030F5DD816FEEFD3E339 /* HotkeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyManager.swift; sourceTree = "<group>"; };
+		3A7EF164C6F327DF60505FAB /* dog_bark.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = dog_bark.wav; sourceTree = "<group>"; };
+		3B291225353C1D2466AE7D51 /* uh_huh_1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = uh_huh_1.wav; sourceTree = "<group>"; };
+		3CE2D8279314EE3285365E1C /* SoundPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundPlayer.swift; sourceTree = "<group>"; };
+		4198E453B6CDF69136467462 /* MyInstantsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyInstantsService.swift; sourceTree = "<group>"; };
+		42BF0630688075CA3B8433C9 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		42E2F433BF5B2393AD15D51C /* SoundDeckTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SoundDeckTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		46BCAB8C92F578D38280412F /* baby_cry.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = baby_cry.wav; sourceTree = "<group>"; };
+		4CAB81C55BC831C508F1B84B /* SoundDeckApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundDeckApp.swift; sourceTree = "<group>"; };
+		523BFB3F20D74A5E34D61040 /* RingBuffer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = RingBuffer.c; sourceTree = "<group>"; };
+		55A53B0D79444925F64B1B63 /* static.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = static.wav; sourceTree = "<group>"; };
+		57BF87B9618686A75CA7DF3B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		5E92D17441E19956CCCF156B /* VoiceChangerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceChangerView.swift; sourceTree = "<group>"; };
+		66EB48E630D4057D18F3E640 /* ProLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProLibraryView.swift; sourceTree = "<group>"; };
+		680ACAB11E8DD7F6A846A876 /* WatermarkPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatermarkPlayer.swift; sourceTree = "<group>"; };
+		6B219E4AFE4C87EE839404A2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		6E8DDB44CDBEE3B48FA0B903 /* SoundDeckInstaller */ = {isa = PBXFileReference; includeInIndex = 0; path = SoundDeckInstaller; sourceTree = BUILT_PRODUCTS_DIR; };
+		7178567BD9167232F086519B /* silence.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = silence.wav; sourceTree = "<group>"; };
+		74113D353B2C0DB649618BC9 /* DriverEntry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DriverEntry.cpp; sourceTree = "<group>"; };
+		764EB2B51A97DC0E4A97BF30 /* SoundGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundGridView.swift; sourceTree = "<group>"; };
+		78BED27B82B9073DE18902C5 /* traffic.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = traffic.wav; sourceTree = "<group>"; };
+		79C63B0E63F6888C46D071E6 /* PopoverContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverContentView.swift; sourceTree = "<group>"; };
+		8146982FAEF16516E8303D31 /* VUMeterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VUMeterView.swift; sourceTree = "<group>"; };
+		815667DA0C219B010624C333 /* SoundStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundStore.swift; sourceTree = "<group>"; };
+		8356FA405F15BDD0ECDFE882 /* uh_huh_3.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = uh_huh_3.wav; sourceTree = "<group>"; };
+		868F7720CE64B41629572C63 /* FolderSidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderSidebarView.swift; sourceTree = "<group>"; };
+		896A24C7A8956BD0D15D8E03 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		8BAFD5E8D7DB4FBA974A5CF9 /* SHMHelpers.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = SHMHelpers.c; sourceTree = "<group>"; };
+		90B8EBEE2CE710FA72063BBB /* SoundFolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundFolder.swift; sourceTree = "<group>"; };
+		940BC31D57CED35EC14DC218 /* UpgradeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpgradeView.swift; sourceTree = "<group>"; };
+		9E8818EEA1EF2E8B10ED3BAA /* HotkeyNames.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyNames.swift; sourceTree = "<group>"; };
+		A4710C271DE3BDACE6B916F6 /* SharedMemoryWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedMemoryWriter.swift; sourceTree = "<group>"; };
+		AA0C8E40781B9240203D0B99 /* alarm.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = alarm.wav; sourceTree = "<group>"; };
+		C0C71AC1C548268F7BD8ED97 /* SoundDeck.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SoundDeck.entitlements; sourceTree = "<group>"; };
+		C35B9277BA234BDA9FE8EC0C /* SupportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportView.swift; sourceTree = "<group>"; };
+		D8B3E647ABB0783B0F3C134D /* PrivacyPolicyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyPolicyView.swift; sourceTree = "<group>"; };
+		E4370F7F33A3831233F2FEF5 /* DriverInstaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DriverInstaller.swift; sourceTree = "<group>"; };
+		E46F4F68FF1BE139E0181882 /* doorbell.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = doorbell.wav; sourceTree = "<group>"; };
+		E92B596D1718BCB20042A07A /* SoundDeck.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SoundDeck.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EA1C1DE8CC887C74DAB540DC /* TrimEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrimEditorView.swift; sourceTree = "<group>"; };
+		ECC54156A9F64EB44EEC6ECF /* uh_huh_2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = uh_huh_2.wav; sourceTree = "<group>"; };
+		F0E75B05D74570602C7F2148 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		F7CBBFC01A600EFB808DFCF4 /* PreviewEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewEngine.swift; sourceTree = "<group>"; };
+		F890EE8B6E7BFC9208407A47 /* WaveformView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveformView.swift; sourceTree = "<group>"; };
+		FA0F900E727F3D303B1BAB2A /* applause.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = applause.wav; sourceTree = "<group>"; };
+		FB77F4B88CF5B0FB70209C72 /* hold_music.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = hold_music.wav; sourceTree = "<group>"; };
+		FC963021EAE9C9D7E93F1450 /* SoundPadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundPadView.swift; sourceTree = "<group>"; };
+		FFBB3315EE9AC3DBC848CE23 /* SoundItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundItem.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2AA162FCE4F54FEFECB04393 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3CB94F9B1871014E39B6A639 /* libSoundDeckCommon.a in Frameworks */,
+				BDABAF492EFA232A4CFAFAA5 /* KeyboardShortcuts in Frameworks */,
+				A29776A861103EB17A8F03F4 /* Sparkle in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		64841F5B63E3AB7EE7BC67DD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A02161B668970896A019C10E /* libSoundDeckCommon.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A90ED4653507C536A7DC979A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C79A529748C7A3CB8B2E0F94 /* libSoundDeckCommon.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		017482DF11D2222E26BCA43B /* DefaultSounds */ = {
+			isa = PBXGroup;
+			children = (
+				AA0C8E40781B9240203D0B99 /* alarm.wav */,
+				FA0F900E727F3D303B1BAB2A /* applause.wav */,
+				46BCAB8C92F578D38280412F /* baby_cry.wav */,
+				3A7EF164C6F327DF60505FAB /* dog_bark.wav */,
+				E46F4F68FF1BE139E0181882 /* doorbell.wav */,
+				FB77F4B88CF5B0FB70209C72 /* hold_music.wav */,
+				3485FC95000BD8E80EEAC766 /* laugh_track.wav */,
+				234A397B789AD500E7EC7BB7 /* phone_ring.wav */,
+				7178567BD9167232F086519B /* silence.wav */,
+				55A53B0D79444925F64B1B63 /* static.wav */,
+				78BED27B82B9073DE18902C5 /* traffic.wav */,
+				3B291225353C1D2466AE7D51 /* uh_huh_1.wav */,
+				ECC54156A9F64EB44EEC6ECF /* uh_huh_2.wav */,
+				8356FA405F15BDD0ECDFE882 /* uh_huh_3.wav */,
+			);
+			path = DefaultSounds;
+			sourceTree = "<group>";
+		};
+		20E1F6A5A9E9655E63318B8A /* SoundDeckApp */ = {
+			isa = PBXGroup;
+			children = (
+				57BF87B9618686A75CA7DF3B /* Info.plist */,
+				C0C71AC1C548268F7BD8ED97 /* SoundDeck.entitlements */,
+				4CAB81C55BC831C508F1B84B /* SoundDeckApp.swift */,
+				E6485B69B4D5333CDD49A8D5 /* App */,
+				613EEB56E090656F50B7E956 /* Audio */,
+				A19A1185EF5F7371EAFE7035 /* Hotkeys */,
+				EC8C7EEBDD245EE84F155816 /* Licensing */,
+				52C20C6622BBDAD22788B128 /* Models */,
+				B406291BE36952D0162F377B /* Services */,
+				9BB2974DE76791B32FC0EBE3 /* Subscription */,
+				A8D39D8011B45B8AC86A24DE /* Views */,
+			);
+			path = SoundDeckApp;
+			sourceTree = "<group>";
+		};
+		241A10B9B5F2B836903CD12C /* SoundDeckCommon */ = {
+			isa = PBXGroup;
+			children = (
+				E2E23B9A60C3DBF0D95E18AA /* Sources */,
+			);
+			path = SoundDeckCommon;
+			sourceTree = "<group>";
+		};
+		40FB0D4ABC7D3999EF1667C8 /* SoundDeckInstaller */ = {
+			isa = PBXGroup;
+			children = (
+				2A77DD26D438765B47A0D45C /* main.swift */,
+			);
+			path = SoundDeckInstaller;
+			sourceTree = "<group>";
+		};
+		52C20C6622BBDAD22788B128 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				90B8EBEE2CE710FA72063BBB /* SoundFolder.swift */,
+				FFBB3315EE9AC3DBC848CE23 /* SoundItem.swift */,
+				815667DA0C219B010624C333 /* SoundStore.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		613EEB56E090656F50B7E956 /* Audio */ = {
+			isa = PBXGroup;
+			children = (
+				160E252F1F772D1432B30072 /* AudioEngineManager.swift */,
+				F7CBBFC01A600EFB808DFCF4 /* PreviewEngine.swift */,
+				A4710C271DE3BDACE6B916F6 /* SharedMemoryWriter.swift */,
+				3CE2D8279314EE3285365E1C /* SoundPlayer.swift */,
+				307B718795E0A3B31994F7CD /* VoiceChanger.swift */,
+			);
+			path = Audio;
+			sourceTree = "<group>";
+		};
+		7DED64BCD854C0CDFA03ADDE /* SoundDeckDriver */ = {
+			isa = PBXGroup;
+			children = (
+				74113D353B2C0DB649618BC9 /* DriverEntry.cpp */,
+				F0E75B05D74570602C7F2148 /* Info.plist */,
+			);
+			path = SoundDeckDriver;
+			sourceTree = "<group>";
+		};
+		9BB2974DE76791B32FC0EBE3 /* Subscription */ = {
+			isa = PBXGroup;
+			children = (
+				3769AE83CE74B431A47E3019 /* SubscriptionManager.swift */,
+			);
+			path = Subscription;
+			sourceTree = "<group>";
+		};
+		9EB4460AECE1D145E86EA32A /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				E9635C1696F058E110DB4E4E /* SoundDeckTests */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		A19A1185EF5F7371EAFE7035 /* Hotkeys */ = {
+			isa = PBXGroup;
+			children = (
+				3A6C030F5DD816FEEFD3E339 /* HotkeyManager.swift */,
+				9E8818EEA1EF2E8B10ED3BAA /* HotkeyNames.swift */,
+			);
+			path = Hotkeys;
+			sourceTree = "<group>";
+		};
+		A8D39D8011B45B8AC86A24DE /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				868F7720CE64B41629572C63 /* FolderSidebarView.swift */,
+				896A24C7A8956BD0D15D8E03 /* OnboardingView.swift */,
+				79C63B0E63F6888C46D071E6 /* PopoverContentView.swift */,
+				D8B3E647ABB0783B0F3C134D /* PrivacyPolicyView.swift */,
+				66EB48E630D4057D18F3E640 /* ProLibraryView.swift */,
+				42BF0630688075CA3B8433C9 /* SettingsView.swift */,
+				764EB2B51A97DC0E4A97BF30 /* SoundGridView.swift */,
+				FC963021EAE9C9D7E93F1450 /* SoundPadView.swift */,
+				C35B9277BA234BDA9FE8EC0C /* SupportView.swift */,
+				1FA201876F1E28698EBCCB19 /* TermsView.swift */,
+				EA1C1DE8CC887C74DAB540DC /* TrimEditorView.swift */,
+				940BC31D57CED35EC14DC218 /* UpgradeView.swift */,
+				5E92D17441E19956CCCF156B /* VoiceChangerView.swift */,
+				8146982FAEF16516E8303D31 /* VUMeterView.swift */,
+				F890EE8B6E7BFC9208407A47 /* WaveformView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		B406291BE36952D0162F377B /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				4198E453B6CDF69136467462 /* MyInstantsService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		D4512219B22EBB33D5DFEC45 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				017482DF11D2222E26BCA43B /* DefaultSounds */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		E2E23B9A60C3DBF0D95E18AA /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				523BFB3F20D74A5E34D61040 /* RingBuffer.c */,
+				8BAFD5E8D7DB4FBA974A5CF9 /* SHMHelpers.c */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		E45E6DFADD2AA1242810D9E6 = {
+			isa = PBXGroup;
+			children = (
+				D4512219B22EBB33D5DFEC45 /* Resources */,
+				20E1F6A5A9E9655E63318B8A /* SoundDeckApp */,
+				241A10B9B5F2B836903CD12C /* SoundDeckCommon */,
+				7DED64BCD854C0CDFA03ADDE /* SoundDeckDriver */,
+				40FB0D4ABC7D3999EF1667C8 /* SoundDeckInstaller */,
+				9EB4460AECE1D145E86EA32A /* Tests */,
+				F2F2E90D4F015A0CD5FE1742 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		E6485B69B4D5333CDD49A8D5 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				6B219E4AFE4C87EE839404A2 /* AppDelegate.swift */,
+				195D880419346D9E546FBD04 /* AppState.swift */,
+				2D2EAF388896B5DE280CEB1D /* AudioActions.swift */,
+				E4370F7F33A3831233F2FEF5 /* DriverInstaller.swift */,
+				11D2CB4FAEBDC2A05F00503A /* EventMonitor.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		E9635C1696F058E110DB4E4E /* SoundDeckTests */ = {
+			isa = PBXGroup;
+			children = (
+				0D9D2B1D18B049433A484C26 /* RingBufferTests.swift */,
+			);
+			path = SoundDeckTests;
+			sourceTree = "<group>";
+		};
+		EC8C7EEBDD245EE84F155816 /* Licensing */ = {
+			isa = PBXGroup;
+			children = (
+				680ACAB11E8DD7F6A846A876 /* WatermarkPlayer.swift */,
+			);
+			path = Licensing;
+			sourceTree = "<group>";
+		};
+		F2F2E90D4F015A0CD5FE1742 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				264722B1D6D75C588B41CC34 /* libSoundDeckCommon.a */,
+				E92B596D1718BCB20042A07A /* SoundDeck.app */,
+				2CB4FAC707FA4447957BAD43 /* SoundDeckDriver.bundle */,
+				6E8DDB44CDBEE3B48FA0B903 /* SoundDeckInstaller */,
+				42E2F433BF5B2393AD15D51C /* SoundDeckTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		061B95012BB9F9EBF21C478F /* SoundDeckCommon */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2EB810D948CC2977316DCA8C /* Build configuration list for PBXNativeTarget "SoundDeckCommon" */;
+			buildPhases = (
+				F80431C4B35C1AD30DA5A987 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SoundDeckCommon;
+			packageProductDependencies = (
+			);
+			productName = SoundDeckCommon;
+			productReference = 264722B1D6D75C588B41CC34 /* libSoundDeckCommon.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		121B6811EA4F81042CDE28EA /* SoundDeckTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B5758DA2A6CBA06BC5EB341E /* Build configuration list for PBXNativeTarget "SoundDeckTests" */;
+			buildPhases = (
+				E09579F67A8D6D07E02294A6 /* Sources */,
+				64841F5B63E3AB7EE7BC67DD /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4A3239EA644CC881D67C6194 /* PBXTargetDependency */,
+				AC8935A438901059596D3813 /* PBXTargetDependency */,
+			);
+			name = SoundDeckTests;
+			packageProductDependencies = (
+			);
+			productName = SoundDeckTests;
+			productReference = 42E2F433BF5B2393AD15D51C /* SoundDeckTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		75FA089DBD438672E59A3E39 /* SoundDeckInstaller */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A7EC139B7E4CA0580DF1CA96 /* Build configuration list for PBXNativeTarget "SoundDeckInstaller" */;
+			buildPhases = (
+				FC9C9F3CD05E3630ECA28020 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SoundDeckInstaller;
+			packageProductDependencies = (
+			);
+			productName = SoundDeckInstaller;
+			productReference = 6E8DDB44CDBEE3B48FA0B903 /* SoundDeckInstaller */;
+			productType = "com.apple.product-type.tool";
+		};
+		A764E67666A5B8A61CD8BA9F /* SoundDeck */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 712640197E5EF8DAD91FF04A /* Build configuration list for PBXNativeTarget "SoundDeck" */;
+			buildPhases = (
+				70548D1140D24700D4D94DF4 /* Sources */,
+				B49648C225C59A1DC3BFA921 /* Resources */,
+				2AA162FCE4F54FEFECB04393 /* Frameworks */,
+				703743C699CEBC1002895CDA /* Embed Dependencies */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				2AF3029926FFCE6FCB20643F /* PBXTargetDependency */,
+				5CB5861F10F4B6912A8F395C /* PBXTargetDependency */,
+			);
+			name = SoundDeck;
+			packageProductDependencies = (
+				4785C5CDC898D102AD82ED05 /* KeyboardShortcuts */,
+				3E308C555B2045C7D95E38DE /* Sparkle */,
+			);
+			productName = SoundDeck;
+			productReference = E92B596D1718BCB20042A07A /* SoundDeck.app */;
+			productType = "com.apple.product-type.application";
+		};
+		E7626C429B23D81666790A43 /* SoundDeckDriver */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FBA2573736D8FF9EE60CB91A /* Build configuration list for PBXNativeTarget "SoundDeckDriver" */;
+			buildPhases = (
+				8B1102A0BDC94D3C93B04369 /* Sources */,
+				A90ED4653507C536A7DC979A /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C30E44E1794076BC6D348A9A /* PBXTargetDependency */,
+			);
+			name = SoundDeckDriver;
+			packageProductDependencies = (
+			);
+			productName = SoundDeckDriver;
+			productReference = 2CB4FAC707FA4447957BAD43 /* SoundDeckDriver.bundle */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4B2FCA6556E79E983CDDD334 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+			};
+			buildConfigurationList = 0933C95E26935C63DAD44D13 /* Build configuration list for PBXProject "SoundDeck" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = E45E6DFADD2AA1242810D9E6;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				7365ED2A51AFF780BEC97F98 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
+				A74F51468E21670438716C50 /* XCRemoteSwiftPackageReference "Sparkle" */,
+			);
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A764E67666A5B8A61CD8BA9F /* SoundDeck */,
+				061B95012BB9F9EBF21C478F /* SoundDeckCommon */,
+				E7626C429B23D81666790A43 /* SoundDeckDriver */,
+				75FA089DBD438672E59A3E39 /* SoundDeckInstaller */,
+				121B6811EA4F81042CDE28EA /* SoundDeckTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B49648C225C59A1DC3BFA921 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E34E80166F5F3D9DE474CCE5 /* alarm.wav in Resources */,
+				B9620CC0B02F78D11A8D1B46 /* applause.wav in Resources */,
+				A619C201AA1A7F190CCF26B9 /* baby_cry.wav in Resources */,
+				5E0EB6E7C49FA52F04D03CB7 /* dog_bark.wav in Resources */,
+				EB2478EB7211952DE237F951 /* doorbell.wav in Resources */,
+				9A32FB4D969203009418D53C /* hold_music.wav in Resources */,
+				C2FD2C9785122B646CDF8790 /* laugh_track.wav in Resources */,
+				5B0B7282346FF09E4A622CAD /* phone_ring.wav in Resources */,
+				3B20E524C808E41A1BDFA09D /* silence.wav in Resources */,
+				BF70A7A23F9FF6946A38504D /* static.wav in Resources */,
+				DDF20CEBB3BEAE6B526B057B /* traffic.wav in Resources */,
+				BE5A4A396726B911FA0DC2AD /* uh_huh_1.wav in Resources */,
+				053391AFE3834728C8AA04D9 /* uh_huh_2.wav in Resources */,
+				DB3FA7839D4A17BA3CBFCDAE /* uh_huh_3.wav in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		70548D1140D24700D4D94DF4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				910C1883CF98271D24E098F7 /* AppDelegate.swift in Sources */,
+				8637DFF0C07779C143A9669D /* AppState.swift in Sources */,
+				B3C85881DB1188DCCCAD4C69 /* AudioActions.swift in Sources */,
+				025F14A58FF75893EDCDE1C1 /* AudioEngineManager.swift in Sources */,
+				7B731DB8A8EC43F3DB9CDA65 /* DriverInstaller.swift in Sources */,
+				3705047DFF6A51CCE8424C68 /* EventMonitor.swift in Sources */,
+				0E9A3FDF234B4C9F25938CE2 /* FolderSidebarView.swift in Sources */,
+				4F0DE6561C72D3934B6F5E6D /* HotkeyManager.swift in Sources */,
+				C375238F2BC7EF32A374A459 /* HotkeyNames.swift in Sources */,
+				E4ECC51977E51407658DCAFA /* MyInstantsService.swift in Sources */,
+				92151543B25CA064B51214BD /* OnboardingView.swift in Sources */,
+				DF559DE261E0CDA3684D36E0 /* PopoverContentView.swift in Sources */,
+				B2B4FCE9A9123640E5600435 /* PreviewEngine.swift in Sources */,
+				4FF212122FF2E9D73EE0FA89 /* PrivacyPolicyView.swift in Sources */,
+				696413D17578ED9586273907 /* ProLibraryView.swift in Sources */,
+				DBB2CCB55D664E571FBCDB25 /* SettingsView.swift in Sources */,
+				B5E1AF5FDDDFAF9A5D8184B1 /* SharedMemoryWriter.swift in Sources */,
+				9133222F6E54A8B412BB4869 /* SoundDeckApp.swift in Sources */,
+				2A05BC8B9673097D9AB90A2C /* SoundFolder.swift in Sources */,
+				D13BC4F5026AB5D2D59A41DF /* SoundGridView.swift in Sources */,
+				E3035B9B1F382D636EA82F4B /* SoundItem.swift in Sources */,
+				3A10D4A564B499A281FAEE57 /* SoundPadView.swift in Sources */,
+				AC45DD4DA7AB8093E2E6FCE5 /* SoundPlayer.swift in Sources */,
+				0CB22F10C9E20D226C564D08 /* SoundStore.swift in Sources */,
+				586B941A770F800CEA3BCE77 /* SubscriptionManager.swift in Sources */,
+				3C2A63BAE508C8DC0F3ECD43 /* SupportView.swift in Sources */,
+				91A380AB30C2D6834CF008B3 /* TermsView.swift in Sources */,
+				190FB2620D415C31B718A3E7 /* TrimEditorView.swift in Sources */,
+				688CD0BFDA3B450AF0C15A6D /* UpgradeView.swift in Sources */,
+				C8F57035A63CEF2A551763FA /* VUMeterView.swift in Sources */,
+				0786070124A7BDC77F067F2B /* VoiceChanger.swift in Sources */,
+				FA1FBDD657A8F98EBB9D2FF6 /* VoiceChangerView.swift in Sources */,
+				4F43B1BD2091A4EDE8AA458E /* WatermarkPlayer.swift in Sources */,
+				63300E4D26BDA785B28E448B /* WaveformView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8B1102A0BDC94D3C93B04369 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D8F17D9621EE05DE2BDA4B7B /* DriverEntry.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E09579F67A8D6D07E02294A6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6C01D89FAE0EFE8A156D6E06 /* RingBufferTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F80431C4B35C1AD30DA5A987 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				10E6AD023F0D995AEEE5B74C /* RingBuffer.c in Sources */,
+				EF6B16334BEFE4D3D992289E /* SHMHelpers.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FC9C9F3CD05E3630ECA28020 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				83C87A28FE5035671FC344ED /* main.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		2AF3029926FFCE6FCB20643F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 061B95012BB9F9EBF21C478F /* SoundDeckCommon */;
+			targetProxy = 5F339704456D9D4A569A6511 /* PBXContainerItemProxy */;
+		};
+		4A3239EA644CC881D67C6194 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A764E67666A5B8A61CD8BA9F /* SoundDeck */;
+			targetProxy = E539783D922E8CF0E3F8A4C4 /* PBXContainerItemProxy */;
+		};
+		5CB5861F10F4B6912A8F395C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E7626C429B23D81666790A43 /* SoundDeckDriver */;
+			targetProxy = D659612FD354766C8A53A405 /* PBXContainerItemProxy */;
+		};
+		AC8935A438901059596D3813 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 061B95012BB9F9EBF21C478F /* SoundDeckCommon */;
+			targetProxy = 9C5A5A0C20E0C6FF2990A391 /* PBXContainerItemProxy */;
+		};
+		C30E44E1794076BC6D348A9A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 061B95012BB9F9EBF21C478F /* SoundDeckCommon */;
+			targetProxy = 29DC31F16D97D8C3D4340F3F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1F5FB8D5F99484994453B07C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		323685583C1058C93D686E45 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = SoundDeckApp/SoundDeck.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/SoundDeckCommon/include";
+				INFOPLIST_FILE = SoundDeckApp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.sounddeck.app;
+				SDKROOT = macosx;
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/SoundDeckCommon/include";
+			};
+			name = Release;
+		};
+		42FB8CAAF256C287550DED66 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/SoundDeckCommon/include";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.sounddeck.tests;
+				SDKROOT = macosx;
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/SoundDeckCommon/include";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SoundDeck.app/Contents/MacOS/SoundDeck";
+			};
+			name = Debug;
+		};
+		86DF99B123635C1D9A51863A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = SoundDeckApp/SoundDeck.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/SoundDeckCommon/include";
+				INFOPLIST_FILE = SoundDeckApp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.sounddeck.app;
+				SDKROOT = macosx;
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/SoundDeckCommon/include";
+			};
+			name = Debug;
+		};
+		8966C99A80CA0A878D62CCA0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_C_LANGUAGE_STANDARD = c11;
+				GENERATE_INFOPLIST_FILE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/SoundDeckCommon/include",
+				);
+				INFOPLIST_FILE = SoundDeckDriver/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"-framework CoreFoundation",
+					"-framework CoreAudio",
+					"-ObjC",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.sounddeck.driver;
+				SDKROOT = macosx;
+				WRAPPER_EXTENSION = driver;
+			};
+			name = Release;
+		};
+		8E0D3ACD2666BB274B4F4214 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.sounddeck.installer;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		B2297CB582178CA86769B338 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_C_LANGUAGE_STANDARD = c11;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/SoundDeckCommon/include";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MODULEMAP_FILE = "$(SRCROOT)/SoundDeckCommon/include/SoundDeckCommon/module.modulemap";
+				PRODUCT_BUNDLE_IDENTIFIER = com.sounddeck.common;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/SoundDeckCommon/include";
+			};
+			name = Release;
+		};
+		BCA32374B0446FCBF04B0579 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.sounddeck.installer;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		C8C2BFCA7B3D0A8FDFF77BD2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_C_LANGUAGE_STANDARD = c11;
+				GENERATE_INFOPLIST_FILE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/SoundDeckCommon/include",
+				);
+				INFOPLIST_FILE = SoundDeckDriver/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"-framework CoreFoundation",
+					"-framework CoreAudio",
+					"-ObjC",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.sounddeck.driver;
+				SDKROOT = macosx;
+				WRAPPER_EXTENSION = driver;
+			};
+			name = Debug;
+		};
+		EF97FCF0C1F0E968CB614A15 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_C_LANGUAGE_STANDARD = c11;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/SoundDeckCommon/include";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MODULEMAP_FILE = "$(SRCROOT)/SoundDeckCommon/include/SoundDeckCommon/module.modulemap";
+				PRODUCT_BUNDLE_IDENTIFIER = com.sounddeck.common;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/SoundDeckCommon/include";
+			};
+			name = Debug;
+		};
+		F8F76E7ED292A92CA89302AB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		FDAB5722A1975AE3CD87E84C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = "$(SRCROOT)/SoundDeckCommon/include";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.sounddeck.tests;
+				SDKROOT = macosx;
+				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/SoundDeckCommon/include";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SoundDeck.app/Contents/MacOS/SoundDeck";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0933C95E26935C63DAD44D13 /* Build configuration list for PBXProject "SoundDeck" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F8F76E7ED292A92CA89302AB /* Debug */,
+				1F5FB8D5F99484994453B07C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		2EB810D948CC2977316DCA8C /* Build configuration list for PBXNativeTarget "SoundDeckCommon" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EF97FCF0C1F0E968CB614A15 /* Debug */,
+				B2297CB582178CA86769B338 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		712640197E5EF8DAD91FF04A /* Build configuration list for PBXNativeTarget "SoundDeck" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				86DF99B123635C1D9A51863A /* Debug */,
+				323685583C1058C93D686E45 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		A7EC139B7E4CA0580DF1CA96 /* Build configuration list for PBXNativeTarget "SoundDeckInstaller" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8E0D3ACD2666BB274B4F4214 /* Debug */,
+				BCA32374B0446FCBF04B0579 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		B5758DA2A6CBA06BC5EB341E /* Build configuration list for PBXNativeTarget "SoundDeckTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				42FB8CAAF256C287550DED66 /* Debug */,
+				FDAB5722A1975AE3CD87E84C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		FBA2573736D8FF9EE60CB91A /* Build configuration list for PBXNativeTarget "SoundDeckDriver" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C8C2BFCA7B3D0A8FDFF77BD2 /* Debug */,
+				8966C99A80CA0A878D62CCA0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		7365ED2A51AFF780BEC97F98 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+		A74F51468E21670438716C50 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		3E308C555B2045C7D95E38DE /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A74F51468E21670438716C50 /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+		4785C5CDC898D102AD82ED05 /* KeyboardShortcuts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7365ED2A51AFF780BEC97F98 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
+			productName = KeyboardShortcuts;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 4B2FCA6556E79E983CDDD334 /* Project object */;
+}

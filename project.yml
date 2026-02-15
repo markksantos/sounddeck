@@ -1,0 +1,123 @@
+name: SoundDeck
+options:
+  bundleIdPrefix: com.sounddeck
+  deploymentTarget:
+    macOS: "13.0"
+  xcodeVersion: "15.0"
+  createIntermediateGroups: true
+  generateEmptyDirectories: true
+
+packages:
+  KeyboardShortcuts:
+    url: https://github.com/sindresorhus/KeyboardShortcuts
+    from: "2.0.0"
+  Sparkle:
+    url: https://github.com/sparkle-project/Sparkle
+    from: "2.5.0"
+
+settings:
+  base:
+    MACOSX_DEPLOYMENT_TARGET: "13.0"
+    SWIFT_VERSION: "5.9"
+
+targets:
+  SoundDeck:
+    type: application
+    platform: macOS
+    sources:
+      - path: SoundDeckApp
+        type: group
+      - path: Resources
+        type: group
+        buildPhase: resources
+    dependencies:
+      - target: SoundDeckCommon
+      - target: SoundDeckDriver
+        embed: true
+        codeSign: true
+        copy:
+          destination: resources
+      - package: KeyboardShortcuts
+      - package: Sparkle
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.sounddeck.app
+        INFOPLIST_FILE: SoundDeckApp/Info.plist
+        CODE_SIGN_ENTITLEMENTS: SoundDeckApp/SoundDeck.entitlements
+        GENERATE_INFOPLIST_FILE: false
+        LD_RUNPATH_SEARCH_PATHS: "@executable_path/../Frameworks"
+        COMBINE_HIDPI_IMAGES: true
+        HEADER_SEARCH_PATHS: "$(SRCROOT)/SoundDeckCommon/include"
+        SWIFT_INCLUDE_PATHS: "$(SRCROOT)/SoundDeckCommon/include"
+    entitlements:
+      path: SoundDeckApp/SoundDeck.entitlements
+      properties:
+        com.apple.security.device.audio-input: true
+        com.apple.security.app-sandbox: false
+
+  SoundDeckCommon:
+    type: library.static
+    platform: macOS
+    sources:
+      - path: SoundDeckCommon/Sources
+        type: group
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.sounddeck.common
+        HEADER_SEARCH_PATHS: "$(SRCROOT)/SoundDeckCommon/include"
+        CLANG_CXX_LANGUAGE_STANDARD: c++17
+        GCC_C_LANGUAGE_STANDARD: c11
+        MODULEMAP_FILE: "$(SRCROOT)/SoundDeckCommon/include/SoundDeckCommon/module.modulemap"
+        SWIFT_INCLUDE_PATHS: "$(SRCROOT)/SoundDeckCommon/include"
+
+  SoundDeckDriver:
+    type: bundle
+    platform: macOS
+    sources:
+      - path: SoundDeckDriver
+        type: group
+    dependencies:
+      - target: SoundDeckCommon
+        link: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.sounddeck.driver
+        INFOPLIST_FILE: SoundDeckDriver/Info.plist
+        GENERATE_INFOPLIST_FILE: false
+        WRAPPER_EXTENSION: driver
+        CLANG_CXX_LANGUAGE_STANDARD: c++17
+        GCC_C_LANGUAGE_STANDARD: c11
+        HEADER_SEARCH_PATHS:
+          - "$(SRCROOT)/SoundDeckCommon/include"
+        OTHER_LDFLAGS:
+          - "-framework CoreFoundation"
+          - "-framework CoreAudio"
+
+  SoundDeckInstaller:
+    type: tool
+    platform: macOS
+    sources:
+      - path: SoundDeckInstaller
+        type: group
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.sounddeck.installer
+        SWIFT_VERSION: "5.9"
+
+  SoundDeckTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: Tests/SoundDeckTests
+        type: group
+    dependencies:
+      - target: SoundDeck
+      - target: SoundDeckCommon
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.sounddeck.tests
+        GENERATE_INFOPLIST_FILE: true
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/SoundDeck.app/Contents/MacOS/SoundDeck"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+        HEADER_SEARCH_PATHS: "$(SRCROOT)/SoundDeckCommon/include"
+        SWIFT_INCLUDE_PATHS: "$(SRCROOT)/SoundDeckCommon/include"
