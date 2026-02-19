@@ -122,17 +122,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let actions = AudioActions(
             play: { [weak self] sound in
                 guard let self = self else { return }
+                // Play through virtual mic if engine is running
                 self.audioEngine.soundPlayer?.play(sound: sound)
-                // Dual-play: also play through PreviewEngine for local monitoring
-                if self.appState.isSFXMonitorEnabled,
-                   let buffer = self.audioEngine.soundPlayer?.getBuffer(for: sound.id) {
-                    self.previewEngine.playSFXMonitor(buffer: buffer, soundID: sound.id, volume: sound.volume)
+                // Play locally through speakers/headphones
+                if self.appState.isSFXMonitorEnabled {
+                    if let buffer = self.audioEngine.soundPlayer?.getBuffer(for: sound.id) {
+                        self.previewEngine.playSFXMonitor(buffer: buffer, soundID: sound.id, volume: sound.volume)
+                    } else {
+                        // Fallback: engine not running, play directly via preview
+                        self.previewEngine.preview(sound: sound)
+                    }
                 }
             },
             stop: { [weak self] sound in
                 guard let self = self else { return }
                 self.audioEngine.soundPlayer?.stop(sound: sound)
                 self.previewEngine.stopSFXMonitor(soundID: sound.id)
+                self.previewEngine.stopPreview()
             },
             preview: { [weak self] sound in
                 self?.previewEngine.preview(sound: sound)

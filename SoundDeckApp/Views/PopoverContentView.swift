@@ -20,7 +20,7 @@ struct PopoverContentView: View {
             // MARK: - Main Content
             HStack(spacing: 0) {
                 FolderSidebarView()
-                    .frame(width: 100)
+                    .frame(width: 140)
 
                 Divider()
                     .background(Color.white.opacity(0.1))
@@ -62,10 +62,14 @@ struct PopoverContentView: View {
 
     private var topBar: some View {
         HStack(spacing: 10) {
-            // Waveform
-            WaveformView()
-                .frame(maxWidth: .infinity)
-                .frame(height: 20)
+            // Waveform + VU Meter
+            VStack(spacing: 2) {
+                WaveformView()
+                    .frame(height: 16)
+                VUMeterView()
+                    .frame(height: 6)
+            }
+            .frame(maxWidth: .infinity)
 
             // SFX Monitor Toggle
             Button {
