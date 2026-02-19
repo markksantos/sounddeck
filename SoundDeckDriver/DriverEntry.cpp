@@ -20,6 +20,7 @@
 #include <pthread.h>
 #include <sys/mman.h>
 #include <fcntl.h>
+#include <errno.h>
 #include <unistd.h>
 #include <string.h>
 #include <math.h>

@@ -107,6 +107,10 @@ final class AudioEngineManager {
     // MARK: - Graph Construction
 
     private func buildGraph() throws {
+        // Remove existing taps before resetting (safe to call if no tap installed)
+        removeMeteringTap()
+        removeVoiceMonitorTap()
+
         // Reset any previous configuration
         engine.reset()
 
