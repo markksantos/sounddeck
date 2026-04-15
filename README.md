@@ -2,6 +2,8 @@
 
 # 🎚️ SoundDeck
 
+<img src="app-icon.png" width="128" alt="SoundDeck icon" />
+
 **Virtual audio mixer and soundboard for macOS with keyboard shortcuts**
 
 [![Swift](https://img.shields.io/badge/Swift-5.9-F05138?style=for-the-badge&logo=swift&logoColor=white)](https://swift.org)
