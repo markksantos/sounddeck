@@ -26,3 +26,9 @@ Package.resolved
 
 # Secrets
 *.env
+
+
+# Environment
+.env
+.env.local
+.env.*.local
