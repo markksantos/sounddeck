@@ -1,33 +1,73 @@
 "use client";
 
+import Link from "next/link";
 import AnimateIn from "./AnimateIn";
+import ProductMockup from "./ProductMockup";
+import { compatibility, comparisonRows } from "@/lib/content";
 
 export default function Screenshots() {
   return (
-    <section className="py-[120px] px-6 bg-foreground/[0.02]">
-      <div className="max-w-4xl mx-auto">
-        <AnimateIn>
-          <div className="glass rounded-3xl p-8 shadow-xl shadow-black/5">
-            <div className="bg-foreground/5 rounded-2xl aspect-[16/10] flex items-center justify-center">
-              <div className="text-center text-foreground/30">
-                <div className="text-5xl mb-3">🖥️</div>
-                <p className="text-base font-medium">
-                  SoundDeck Popover — Full App View
-                </p>
-                <p className="text-sm mt-1">Placeholder for app screenshot</p>
-              </div>
-            </div>
-          </div>
+    <section id="compatibility" className="section section-ink">
+      <div className="section-inner">
+        <AnimateIn className="section-heading">
+          <p className="eyebrow">Compatibility</p>
+          <h2>One virtual mic for the apps you already use.</h2>
+          <p>
+            Select SoundDeck Virtual Mic once in your call, stream, or recording
+            app. Your real mic and triggered sounds travel through the same route.
+          </p>
         </AnimateIn>
 
-        <AnimateIn delay={0.15} className="mt-8 max-w-sm mx-auto">
-          <div className="glass rounded-2xl p-4 shadow-lg shadow-black/5">
-            <div className="bg-foreground/5 rounded-xl aspect-[4/1] flex items-center justify-center">
-              <p className="text-sm text-foreground/30 font-medium">
-                Menu bar context
+        <div className="compat-layout">
+          <AnimateIn className="compat-visual">
+            <ProductMockup compact />
+          </AnimateIn>
+
+          <AnimateIn delay={0.12} className="compat-panel">
+            <h3>Known target apps</h3>
+            <div className="compat-list" aria-label="Compatible app list">
+              {compatibility.map((app) => (
+                <span key={app}>{app}</span>
+              ))}
+            </div>
+            <div className="routing-card">
+              <span>Microphone Input</span>
+              <strong>SoundDeck Virtual Mic</strong>
+              <p>
+                Works with meeting apps, browsers, streaming software, and
+                recording tools that expose a microphone selector.
               </p>
             </div>
-          </div>
+            <Link className="button button-ghost" href="/compatibility">
+              See app setup notes
+            </Link>
+          </AnimateIn>
+        </div>
+
+        <AnimateIn delay={0.16} className="comparison-table-wrap">
+          <table className="comparison-table">
+            <caption>SoundDeck compared with common soundboard workflows</caption>
+            <thead>
+              <tr>
+                <th>Workflow need</th>
+                <th>SoundDeck</th>
+                <th>Web soundboards</th>
+                <th>Hardware-only setups</th>
+              </tr>
+            </thead>
+            <tbody>
+              {comparisonRows.map((row) => (
+                <tr key={row[0]}>
+                  {row.map((cell) => (
+                    <td key={cell}>{cell}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <Link className="button button-ghost" href="/compare">
+            Compare workflows
+          </Link>
         </AnimateIn>
       </div>
     </section>

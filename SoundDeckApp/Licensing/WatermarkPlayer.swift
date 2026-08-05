@@ -2,10 +2,10 @@ import AVFoundation
 import Combine
 import os.log
 
-/// Anti-piracy watermark that plays a short 1kHz beep through the SFX mixer
-/// every 60 seconds when the trial has expired and no valid license exists.
+/// Free-plan audio watermark that plays a short 1kHz beep through the SFX mixer
+/// every 60 seconds while SoundDeck Pro is not active.
 ///
-/// Automatically starts/stops based on appState license state changes.
+/// Automatically starts/stops based on Pro access changes.
 final class WatermarkPlayer {
     private let appState: AppState
     private let logger = Logger(subsystem: "com.sounddeck.app", category: "WatermarkPlayer")
@@ -62,7 +62,6 @@ final class WatermarkPlayer {
 
         for frame in 0..<Int(frameCount) {
             // Sine wave with envelope to avoid clicks
-            let t = Double(frame) / Double(frameCount)
             let envelope: Float
 
             // Short fade in/out (5ms each)

@@ -1,5 +1,8 @@
 import SwiftUI
 import Combine
+import AVFoundation
+import Sparkle
+import UniformTypeIdentifiers
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem!
@@ -14,12 +17,30 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     lazy var hotkeyManager = HotkeyManager(appState: appState)
     lazy var subscriptionManager = SubscriptionManager(appState: appState)
     lazy var watermarkPlayer = WatermarkPlayer(appState: appState)
+    private var updaterController: SPUStandardUpdaterController?
+
+    var isUpdaterConfigured: Bool {
+        let info = Bundle.main.infoDictionary
+        let publicKey = (info?["SUPublicEDKey"] as? String)?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let feedURLString = (info?["SUFeedURL"] as? String)?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+
+        guard !publicKey.isEmpty,
+              let feedURL = URL(string: feedURLString),
+              feedURL.scheme == "https" else {
+            return false
+        }
+
+        return true
+    }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         setupStatusItem()
         setupPopover()
         setupEventMonitor()
         loadState()
+        startUpdaterIfConfigured()
     }
 
     private func setupStatusItem() {
@@ -80,10 +101,36 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func stopAllSounds() {
         audioEngine.soundPlayer?.stopAll()
+        previewEngine.stopAllSFXMonitor()
+        previewEngine.stopPreview()
     }
 
     @objc private func quitApp() {
         NSApplication.shared.terminate(nil)
+    }
+
+    func checkForUpdates() {
+        guard isUpdaterConfigured else {
+            let alert = NSAlert()
+            alert.messageText = "Update checking is not configured"
+            alert.informativeText = "SoundDeck needs a Sparkle public key in the app bundle before update checks can run."
+            alert.alertStyle = .informational
+            alert.addButton(withTitle: "OK")
+            alert.runModal()
+            return
+        }
+
+        startUpdaterIfConfigured()
+        updaterController?.checkForUpdates(nil)
+    }
+
+    private func startUpdaterIfConfigured() {
+        guard isUpdaterConfigured, updaterController == nil else { return }
+        updaterController = SPUStandardUpdaterController(
+            startingUpdater: true,
+            updaterDelegate: nil,
+            userDriverDelegate: nil
+        )
     }
 
     private func openFilePicker(folderID: UUID?) {
@@ -94,7 +141,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         let panel = NSOpenPanel()
         panel.title = "Add Sounds"
-        panel.allowedContentTypes = [.audio, .mp3, .wav, .aiff]
+        panel.allowedContentTypes = supportedAudioContentTypes
         panel.allowsMultipleSelection = true
         panel.canChooseDirectories = false
 
@@ -102,16 +149,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             guard response == .OK else { return }
             for url in panel.urls {
                 guard self?.appState.canAddMoreSounds == true else { break }
-                if let sound = self?.soundStore.importSound(url: url),
-                   let folderID = folderID {
-                    DispatchQueue.main.async {
-                        if let index = self?.appState.sounds.firstIndex(where: { $0.id == sound.id }) {
-                            self?.appState.sounds[index].folderID = folderID
-                        }
-                    }
-                }
+                _ = self?.soundStore.importSound(url: url, folderID: folderID)
             }
         }
+    }
+
+    private var supportedAudioContentTypes: [UTType] {
+        var types: [UTType] = [.audio, .mp3, .wav, .aiff, .mpeg4Audio]
+        ["aac", "caf", "m4a"].compactMap { UTType(filenameExtension: $0) }.forEach { type in
+            if !types.contains(type) {
+                types.append(type)
+            }
+        }
+        return types
     }
 
     private func setupPopover() {
@@ -147,25 +197,26 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 guard let self = self else { return }
                 self.audioEngine.soundPlayer?.stopAll()
                 self.previewEngine.stopAllSFXMonitor()
+                self.previewEngine.stopPreview()
             },
             importSound: { [weak self] url, folderID in
                 guard self?.appState.canAddMoreSounds == true else { return }
-                if let sound = self?.soundStore.importSound(url: url),
-                   let folderID = folderID {
-                    DispatchQueue.main.async {
-                        if let index = self?.appState.sounds.firstIndex(where: { $0.id == sound.id }) {
-                            self?.appState.sounds[index].folderID = folderID
-                        }
-                    }
-                }
+                _ = self?.soundStore.importSound(url: url, folderID: folderID)
             },
             pickAndImportSounds: { [weak self] folderID in
                 self?.openFilePicker(folderID: folderID)
             },
+            duplicateSound: { [weak self] sound in
+                guard let self = self, self.appState.canAddMoreSounds else { return }
+                _ = self.soundStore.duplicateSound(sound)
+            },
             deleteSound: { [weak self] sound in
-                self?.audioEngine.soundPlayer?.stop(sound: sound)
-                self?.appState.currentlyPlayingSoundIDs.remove(sound.id)
-                self?.soundStore.deleteSound(sound)
+                guard let self = self else { return }
+                self.audioEngine.soundPlayer?.stop(sound: sound)
+                self.previewEngine.stopSFXMonitor(soundID: sound.id)
+                self.previewEngine.stopPreview()
+                self.appState.currentlyPlayingSoundIDs.remove(sound.id)
+                self.soundStore.deleteSound(sound)
             }
         )
 
@@ -199,6 +250,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             atPath: "/Library/Audio/Plug-Ins/HAL/SoundDeckDriver.driver"
         )
 
+        // Check actual microphone permission state
+        appState.hasMicPermission = AVCaptureDevice.authorizationStatus(for: .audio) == .authorized
+
         // Show onboarding if needed
         if !appState.isDriverInstalled || !appState.hasMicPermission {
             appState.showOnboarding = true
@@ -227,7 +281,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             .dropFirst()
             .receive(on: DispatchQueue.main)
             .sink { [weak self] deviceID in
-                self?.previewEngine.outputDeviceID = deviceID
+                if let deviceID, deviceID != 0 {
+                    self?.previewEngine.outputDeviceID = deviceID
+                } else {
+                    self?.previewEngine.outputDeviceID = nil
+                }
             }
             .store(in: &cancellables)
 
@@ -243,6 +301,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                     self.audioEngine.configureWatermark(self.watermarkPlayer)
                 } else if !installed {
                     self.audioEngine.stop()
+                }
+            }
+            .store(in: &cancellables)
+
+        // Observe mic permission granted mid-session (e.g. during onboarding)
+        appState.$hasMicPermission
+            .removeDuplicates()
+            .dropFirst()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] granted in
+                guard let self = self else { return }
+                if granted && self.appState.isDriverInstalled {
+                    self.audioEngine.start()
+                    self.audioEngine.configureWatermark(self.watermarkPlayer)
                 }
             }
             .store(in: &cancellables)

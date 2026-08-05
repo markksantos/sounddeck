@@ -21,6 +21,9 @@ struct AudioActions {
     /// Open a file picker and import the selected sounds into a folder.
     var pickAndImportSounds: (_ folderID: UUID?) -> Void = { _ in }
 
+    /// Duplicate a sound into a new stored audio file and library item.
+    var duplicateSound: (SoundItem) -> Void = { _ in }
+
     /// Delete a sound (removes file, hotkey handler, and state).
     var deleteSound: (SoundItem) -> Void = { _ in }
 }

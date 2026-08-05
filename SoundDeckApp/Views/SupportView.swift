@@ -1,8 +1,12 @@
 import SwiftUI
+import AppKit
 
 struct SupportView: View {
     @EnvironmentObject private var appState: AppState
     @Environment(\.dismiss) private var dismiss
+
+    @State private var diagnosticsStatusMessage: String?
+    @State private var diagnosticsStatusIsError = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -64,7 +68,7 @@ struct SupportView: View {
                                 label: "Email Support",
                                 detail: "support@sounddeck.app"
                             ) {
-                                if let url = URL(string: "mailto:support@sounddeck.app") {
+                                if let url = supportEmailURL {
                                     NSWorkspace.shared.open(url)
                                 }
                             }
@@ -83,12 +87,33 @@ struct SupportView: View {
 
                     // System Info
                     supportSection(title: "System Info", icon: "info.circle") {
-                        VStack(spacing: 6) {
+                        VStack(spacing: 8) {
                             infoRow(label: "App Version", value: appVersion)
                             infoRow(label: "macOS", value: ProcessInfo.processInfo.operatingSystemVersionString)
                             infoRow(label: "Plan", value: appState.isPro ? "Pro" : "Free")
                             infoRow(label: "Driver", value: appState.isDriverInstalled ? "Installed" : "Not Installed")
+                            infoRow(label: "Mic Permission", value: appState.hasMicPermission ? "Granted" : "Not Granted")
                             infoRow(label: "Audio Engine", value: appState.isEngineRunning ? "Running" : "Stopped")
+
+                            Divider().opacity(0.3)
+
+                            Button {
+                                copySupportDiagnostics()
+                            } label: {
+                                Label("Copy Diagnostics", systemImage: "doc.on.doc")
+                                    .font(.system(size: 12, weight: .medium))
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 6)
+                            }
+                            .buttonStyle(.bordered)
+
+                            if let diagnosticsStatusMessage {
+                                Text(diagnosticsStatusMessage)
+                                    .font(.system(size: 11))
+                                    .foregroundColor(diagnosticsStatusIsError ? .red : .secondary)
+                                    .multilineTextAlignment(.center)
+                                    .frame(maxWidth: .infinity)
+                            }
                         }
                     }
                 }
@@ -176,5 +201,63 @@ struct SupportView: View {
 
     private var appVersion: String {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"
+    }
+
+    private var supportDiagnostics: String {
+        [
+            "SoundDeck Diagnostics",
+            "App Version: \(appVersion)",
+            "macOS: \(ProcessInfo.processInfo.operatingSystemVersionString)",
+            "Plan: \(appState.isPro ? "Pro" : "Free")",
+            "Driver: \(appState.isDriverInstalled ? "Installed" : "Not Installed")",
+            "Microphone Permission: \(appState.hasMicPermission ? "Granted" : "Not Granted")",
+            "Audio Engine: \(appState.isEngineRunning ? "Running" : "Stopped")",
+            "Muted: \(appState.isMuted ? "Yes" : "No")",
+            "SFX Monitor: \(appState.isSFXMonitorEnabled ? "On" : "Off")",
+            "Voice Monitor: \(appState.isVoiceMonitorEnabled ? "On" : "Off")",
+            "Voice Changer: \(appState.isVoiceChangerActive ? "Active" : "Off")",
+            "Sounds: \(appState.sounds.count)",
+            "Custom Sounds: \(appState.customSoundCount)",
+            "Folders: \(appState.folders.count)",
+            "Selected Input Device ID: \(deviceIDString(appState.selectedInputDeviceID))",
+            "Selected Output Device ID: \(deviceIDString(appState.selectedOutputDeviceID))"
+        ].joined(separator: "\n")
+    }
+
+    private var supportEmailURL: URL? {
+        var components = URLComponents()
+        components.scheme = "mailto"
+        components.path = "support@sounddeck.app"
+        components.queryItems = [
+            URLQueryItem(name: "subject", value: "SoundDeck Support - v\(appVersion)"),
+            URLQueryItem(
+                name: "body",
+                value: """
+                Describe what happened and which app you were using:
+
+
+                Diagnostics:
+                \(supportDiagnostics)
+                """
+            )
+        ]
+        return components.url
+    }
+
+    private func deviceIDString(_ id: UInt32?) -> String {
+        id.map(String.init) ?? "System Default"
+    }
+
+    private func copySupportDiagnostics() {
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+
+        if pasteboard.setString(supportDiagnostics, forType: .string) {
+            diagnosticsStatusIsError = false
+            diagnosticsStatusMessage = "Diagnostics copied. Paste them into your support email."
+        } else {
+            diagnosticsStatusIsError = true
+            diagnosticsStatusMessage = "Could not copy diagnostics. Please try again."
+        }
     }
 }

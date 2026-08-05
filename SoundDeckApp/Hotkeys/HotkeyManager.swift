@@ -11,6 +11,7 @@ final class HotkeyManager {
     private let appState: AppState
     private let logger = Logger(subsystem: "com.sounddeck.app", category: "HotkeyManager")
     private var cancellables = Set<AnyCancellable>()
+    private var registeredSoundHotkeyNames = Set<KeyboardShortcuts.Name>()
 
     /// Weak reference to the audio engine's sound player.
     /// Set this after AudioEngineManager is initialized.
@@ -40,6 +41,7 @@ final class HotkeyManager {
         KeyboardShortcuts.removeHandler(for: .stopAll)
         KeyboardShortcuts.removeHandler(for: .toggleVoiceChanger)
 
+        unregisterSoundHotkeys()
         for sound in appState.sounds {
             let name = KeyboardShortcuts.Name.forSound(id: sound.id)
             KeyboardShortcuts.removeHandler(for: name)
@@ -65,6 +67,7 @@ final class HotkeyManager {
             guard let self = self else { return }
             self.audioEngineManager?.soundPlayer?.stopAll()
             self.previewEngine?.stopAllSFXMonitor()
+            self.previewEngine?.stopPreview()
             self.logger.info("Stop all triggered via hotkey")
         }
 
@@ -82,20 +85,15 @@ final class HotkeyManager {
     // MARK: - Per-Sound Hotkeys
 
     private func registerSoundHotkeys() {
+        unregisterSoundHotkeys()
+
         // Per-sound hotkeys require Pro subscription
         guard appState.canUsePerSoundHotkeys else {
-            // Remove any previously registered per-sound handlers
-            for sound in appState.sounds {
-                let name = KeyboardShortcuts.Name.forSound(id: sound.id)
-                KeyboardShortcuts.removeHandler(for: name)
-            }
             logger.info("Per-sound hotkeys disabled (requires Pro)")
             return
         }
 
         for sound in appState.sounds {
-            guard sound.hotkeyName != nil else { continue }
-
             let name = KeyboardShortcuts.Name.forSound(id: sound.id)
             let soundID = sound.id
 
@@ -103,7 +101,15 @@ final class HotkeyManager {
                 guard let self = self else { return }
                 self.triggerSound(id: soundID)
             }
+            registeredSoundHotkeyNames.insert(name)
         }
+    }
+
+    private func unregisterSoundHotkeys() {
+        for name in registeredSoundHotkeyNames {
+            KeyboardShortcuts.removeHandler(for: name)
+        }
+        registeredSoundHotkeyNames.removeAll()
     }
 
     /// Triggers playback for a specific sound by ID.
@@ -122,6 +128,7 @@ final class HotkeyManager {
         if soundPlayer.isPlaying(sound: sound) {
             soundPlayer.stop(sound: sound)
             previewEngine?.stopSFXMonitor(soundID: sound.id)
+            previewEngine?.stopPreview()
             logger.info("Hotkey stopped sound: \(sound.name)")
         } else {
             soundPlayer.play(sound: sound)

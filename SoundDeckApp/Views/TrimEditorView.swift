@@ -260,8 +260,7 @@ struct TrimEditorView: View {
 
         let fileURL = sound.fileURL
         guard FileManager.default.fileExists(atPath: fileURL.path) else {
-            // Generate placeholder waveform for preview/demo
-            generatePlaceholderWaveform()
+            generateFallbackWaveform()
             initTrimFromModel()
             return
         }
@@ -294,8 +293,8 @@ struct TrimEditorView: View {
         trimEnd = sound.trimEnd > 0 ? sound.trimEnd / audioDuration : 1.0
     }
 
-    private func generatePlaceholderWaveform() {
-        // Generate realistic-looking placeholder data
+    private func generateFallbackWaveform() {
+        // Generate a realistic-looking waveform when the source file is unavailable.
         var samples: [Float] = []
         for i in 0..<200 {
             let t = Float(i) / 200.0
@@ -304,7 +303,7 @@ struct TrimEditorView: View {
             samples.append(envelope * noise * 0.8)
         }
         waveformSamples = samples
-        audioDuration = 5.0 // placeholder
+        audioDuration = 5.0
         isLoadingWaveform = false
     }
 

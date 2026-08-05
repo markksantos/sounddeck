@@ -1,4 +1,5 @@
 import SwiftUI
+import KeyboardShortcuts
 
 /// Individual sound pad displayed in the grid.
 /// Click to play into mic, long-press to preview in headphones, right-click for options.
@@ -13,8 +14,14 @@ struct SoundPadView: View {
     @State private var showRenameAlert = false
     @State private var showColorPicker = false
     @State private var showIconPicker = false
+    @State private var showVolumeEditor = false
     @State private var showTrimEditor = false
+    @State private var showDeleteConfirmation = false
+    @State private var showUpgradeLimitAlert = false
+    @State private var showUpgrade = false
     @State private var renameText = ""
+    @State private var shortcutDisplay: String?
+    private let maxSoundNameLength = 80
 
     private var isPlaying: Bool {
         appState.currentlyPlayingSoundIDs.contains(sound.id)
@@ -31,15 +38,45 @@ struct SoundPadView: View {
         .onHover { hovering in
             isHovering = hovering
         }
+        .onAppear {
+            refreshShortcutDisplay()
+        }
+        .onChange(of: sound.hotkeyName) { _ in
+            refreshShortcutDisplay()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .keyboardShortcutsShortcutDidChange)) { notification in
+            guard let name = notification.userInfo?["name"] as? KeyboardShortcuts.Name,
+                  name == .forSound(id: sound.id) else { return }
+            refreshShortcutDisplay()
+        }
         .contextMenu { contextMenuItems }
         .alert("Rename Sound", isPresented: $showRenameAlert) {
             TextField("Name", text: $renameText)
             Button("Cancel", role: .cancel) {}
             Button("Rename") {
+                let trimmed = renameText.trimmingCharacters(in: .whitespacesAndNewlines)
+                guard !trimmed.isEmpty else { return }
+                let bounded = String(trimmed.prefix(maxSoundNameLength))
                 if let index = appState.sounds.firstIndex(where: { $0.id == sound.id }) {
-                    appState.sounds[index].name = renameText
+                    appState.sounds[index].name = bounded
                 }
             }
+        }
+        .alert("Delete \(sound.name)?", isPresented: $showDeleteConfirmation) {
+            Button("Cancel", role: .cancel) {}
+            Button("Delete", role: .destructive) {
+                audioActions.deleteSound(sound)
+            }
+        } message: {
+            Text("This removes the sound from SoundDeck and deletes its copied audio file from app storage.")
+        }
+        .alert("Sound Limit Reached", isPresented: $showUpgradeLimitAlert) {
+            Button("Upgrade") {
+                showUpgrade = true
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Duplicating creates another custom sound. Free plan includes \(appState.maxFreeSounds) custom sounds. Upgrade to Pro for unlimited custom sounds.")
         }
         .sheet(isPresented: $showColorPicker) {
             ColorPickerSheet(soundID: sound.id)
@@ -49,10 +86,18 @@ struct SoundPadView: View {
             IconPickerSheet(soundID: sound.id)
                 .environmentObject(appState)
         }
+        .sheet(isPresented: $showVolumeEditor) {
+            VolumeEditorSheet(soundID: sound.id)
+                .environmentObject(appState)
+        }
         .sheet(isPresented: $showTrimEditor) {
             if let index = appState.sounds.firstIndex(where: { $0.id == sound.id }) {
                 TrimEditorView(sound: $appState.sounds[index])
             }
+        }
+        .sheet(isPresented: $showUpgrade) {
+            UpgradeView()
+                .environmentObject(appState)
         }
     }
 
@@ -71,8 +116,8 @@ struct SoundPadView: View {
                 .truncationMode(.tail)
 
             // Hotkey badge
-            if sound.hotkeyName != nil {
-                Text(sound.hotkeyName ?? "")
+            if let shortcutDisplay {
+                Text(shortcutDisplay)
                     .font(.system(size: 8, weight: .semibold, design: .monospaced))
                     .foregroundColor(.white.opacity(0.7))
                     .padding(.horizontal, 4)
@@ -135,6 +180,36 @@ struct SoundPadView: View {
             Label("Change Icon", systemImage: "star.square.on.square")
         }
 
+        Button {
+            duplicateSound()
+        } label: {
+            Label("Duplicate Sound", systemImage: "doc.on.doc")
+        }
+
+        Menu {
+            Button {
+                moveToFolder(nil)
+            } label: {
+                Label("All Sounds", systemImage: sound.folderID == nil ? "checkmark" : "speaker.wave.2.fill")
+            }
+
+            ForEach(appState.folders) { folder in
+                Button {
+                    moveToFolder(folder.id)
+                } label: {
+                    Label(folder.name, systemImage: sound.folderID == folder.id ? "checkmark" : folder.iconName)
+                }
+            }
+        } label: {
+            Label("Move to Folder", systemImage: "folder")
+        }
+
+        Button {
+            showVolumeEditor = true
+        } label: {
+            Label("Volume", systemImage: "slider.horizontal.3")
+        }
+
         Divider()
 
         if appState.canUseTrimEditor {
@@ -151,7 +226,7 @@ struct SoundPadView: View {
         Divider()
 
         Button(role: .destructive) {
-            audioActions.deleteSound(sound)
+            showDeleteConfirmation = true
         } label: {
             Label("Delete", systemImage: "trash")
         }
@@ -165,6 +240,75 @@ struct SoundPadView: View {
         } else {
             audioActions.play(sound)
         }
+    }
+
+    private func moveToFolder(_ folderID: UUID?) {
+        guard let index = appState.sounds.firstIndex(where: { $0.id == sound.id }) else { return }
+        appState.sounds[index].folderID = folderID
+    }
+
+    private func duplicateSound() {
+        guard appState.canAddMoreSounds else {
+            showUpgradeLimitAlert = true
+            return
+        }
+        audioActions.duplicateSound(sound)
+    }
+
+    @MainActor
+    private func refreshShortcutDisplay() {
+        shortcutDisplay = KeyboardShortcuts.getShortcut(for: .forSound(id: sound.id))?.description
+    }
+}
+
+// MARK: - Volume Editor Sheet
+
+struct VolumeEditorSheet: View {
+    @EnvironmentObject private var appState: AppState
+    @Environment(\.dismiss) private var dismiss
+
+    let soundID: UUID
+
+    private var volumeBinding: Binding<Float> {
+        Binding(
+            get: {
+                appState.sounds.first(where: { $0.id == soundID })?.volume ?? 1.0
+            },
+            set: { value in
+                if let index = appState.sounds.firstIndex(where: { $0.id == soundID }) {
+                    appState.sounds[index].volume = min(max(value, 0.0), 1.0)
+                }
+            }
+        )
+    }
+
+    var body: some View {
+        VStack(spacing: 16) {
+            Text("Sound Volume")
+                .font(.headline)
+
+            Slider(value: volumeBinding, in: 0...1, step: 0.05) {
+                Text("Volume")
+            } minimumValueLabel: {
+                Image(systemName: "speaker.fill")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            } maximumValueLabel: {
+                Image(systemName: "speaker.wave.3.fill")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+
+            Text("\(Int(volumeBinding.wrappedValue * 100))%")
+                .font(.system(size: 20, weight: .bold, design: .rounded))
+
+            Button("Done") {
+                dismiss()
+            }
+            .buttonStyle(.borderedProminent)
+        }
+        .padding(20)
+        .frame(width: 280)
     }
 }
 

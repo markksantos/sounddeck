@@ -1,5 +1,6 @@
 import SwiftUI
 import os.log
+import AVFoundation
 
 /// Browsable sound library for Pro subscribers, powered by the MyInstants API.
 /// Presented as a sheet with search, category tabs, and a scrollable grid.
@@ -16,6 +17,7 @@ struct ProLibraryView: View {
     @State private var downloadedIDs: Set<String> = []
     @State private var previewingID: String?
     @State private var searchTask: Task<Void, Never>?
+    @State private var previewTask: Task<Void, Never>?
 
     private let service = MyInstantsService.shared
     private let logger = Logger(subsystem: "com.sounddeck.app", category: "ProLibraryView")
@@ -48,11 +50,22 @@ struct ProLibraryView: View {
             // Cancel any pending tasks and stop preview
             searchTask?.cancel()
             searchTask = nil
+            previewTask?.cancel()
+            previewTask = nil
             if previewingID != nil {
                 if let appDelegate = NSApplication.shared.delegate as? AppDelegate {
                     appDelegate.previewEngine.stopPreview()
                 }
                 previewingID = nil
+            }
+        }
+        .onChange(of: appState.canAccessProLibrary) { canAccess in
+            if !canAccess {
+                cancelActiveWork()
+                sounds = []
+                errorMessage = nil
+                isLoading = false
+                downloadingIDs.removeAll()
             }
         }
     }
@@ -168,7 +181,9 @@ struct ProLibraryView: View {
 
     private var contentArea: some View {
         Group {
-            if isLoading {
+            if !appState.canAccessProLibrary {
+                lockedView
+            } else if isLoading {
                 loadingView
             } else if let errorMessage {
                 errorView(errorMessage)
@@ -188,6 +203,22 @@ struct ProLibraryView: View {
             Text("Loading sounds...")
                 .font(.system(size: 12))
                 .foregroundColor(.secondary)
+            Spacer()
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private var lockedView: some View {
+        VStack(spacing: 12) {
+            Spacer()
+            Image(systemName: "lock.fill")
+                .font(.system(size: 28))
+                .foregroundColor(.secondary.opacity(0.6))
+            Text("SoundDeck Pro is required to browse the Pro Sound Library.")
+                .font(.system(size: 12))
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 40)
             Spacer()
         }
         .frame(maxWidth: .infinity)
@@ -334,6 +365,13 @@ struct ProLibraryView: View {
     }
 
     private func loadSounds() async {
+        guard appState.canAccessProLibrary else {
+            sounds = []
+            errorMessage = nil
+            isLoading = false
+            return
+        }
+
         isLoading = true
         errorMessage = nil
 
@@ -364,37 +402,60 @@ struct ProLibraryView: View {
     }
 
     private func previewSound(_ sound: MyInstantsService.Sound) {
+        guard appState.canAccessProLibrary else { return }
         guard let appDelegate = NSApplication.shared.delegate as? AppDelegate else { return }
 
         // If already previewing this sound, stop it
         if previewingID == sound.id {
             appDelegate.previewEngine.stopPreview()
+            previewTask?.cancel()
+            previewTask = nil
             previewingID = nil
             return
         }
 
         // Download to temp and preview
+        previewTask?.cancel()
+        appDelegate.previewEngine.stopPreview()
         previewingID = sound.id
 
-        Task {
+        previewTask = Task {
+            let tempDir = FileManager.default.temporaryDirectory
+            let tempFile = tempDir.appendingPathComponent("preview_\(sound.id).mp3")
+
             do {
-                let tempDir = FileManager.default.temporaryDirectory
-                let tempFile = tempDir.appendingPathComponent("preview_\(sound.id).mp3")
                 try await service.downloadSound(from: sound.mp3, to: tempFile)
+                try Task.checkCancellation()
 
                 // PreviewEngine expects a relative path via fileURL; use a direct approach
                 await MainActor.run {
-                    previewSoundFile(tempFile, engine: appDelegate.previewEngine)
+                    guard previewingID == sound.id else {
+                        try? FileManager.default.removeItem(at: tempFile)
+                        return
+                    }
+                    previewSoundFile(tempFile, soundID: sound.id, engine: appDelegate.previewEngine)
+                }
+            } catch is CancellationError {
+                try? FileManager.default.removeItem(at: tempFile)
+                await MainActor.run {
+                    if previewingID == sound.id {
+                        previewingID = nil
+                    }
                 }
             } catch {
                 logger.error("Preview download failed: \(error.localizedDescription)")
-                await MainActor.run { previewingID = nil }
+                try? FileManager.default.removeItem(at: tempFile)
+                await MainActor.run {
+                    if previewingID == sound.id {
+                        previewingID = nil
+                    }
+                }
             }
         }
     }
 
     /// Preview an audio file directly via the PreviewEngine using AVFoundation.
-    private func previewSoundFile(_ fileURL: URL, engine: PreviewEngine) {
+    private func previewSoundFile(_ fileURL: URL, soundID: String, engine: PreviewEngine) {
         // Create a SoundItem that points to the absolute temp path.
         // SoundItem.fileURL prepends appSupportDirectory, so we use a workaround:
         // Write a small helper that plays directly. Since PreviewEngine.preview
@@ -423,8 +484,17 @@ struct ProLibraryView: View {
                 )
                 engine.preview(sound: tempSound)
 
-                // Clean up preview file after a delay
-                DispatchQueue.global().asyncAfter(deadline: .now() + 15) {
+                try? fm.removeItem(at: fileURL)
+
+                let duration = previewDuration(for: destURL) ?? 15
+                DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
+                    if previewingID == soundID {
+                        previewingID = nil
+                    }
+                }
+
+                // Clean up staged preview file after playback has had time to finish.
+                DispatchQueue.global().asyncAfter(deadline: .now() + max(duration + 2, 15)) {
                     try? fm.removeItem(at: destURL)
                 }
             } catch {
@@ -434,24 +504,29 @@ struct ProLibraryView: View {
         }
     }
 
+    private func previewDuration(for fileURL: URL) -> TimeInterval? {
+        guard let audioFile = try? AVAudioFile(forReading: fileURL) else { return nil }
+        let sampleRate = audioFile.processingFormat.sampleRate
+        guard sampleRate > 0 else { return nil }
+        return TimeInterval(audioFile.length) / sampleRate
+    }
+
     private func addToLibrary(_ sound: MyInstantsService.Sound) {
+        guard appState.canAccessProLibrary else { return }
         guard let appDelegate = NSApplication.shared.delegate as? AppDelegate else { return }
 
         downloadingIDs.insert(sound.id)
 
         Task {
-            do {
-                let tempDir = FileManager.default.temporaryDirectory
-                let sanitizedTitle = sound.title
-                    .replacingOccurrences(of: "/", with: "-")
-                    .replacingOccurrences(of: ":", with: "-")
-                let tempFile = tempDir.appendingPathComponent("\(sanitizedTitle)_\(sound.id).mp3")
+            let tempDir = FileManager.default.temporaryDirectory
+            let tempFile = tempDir.appendingPathComponent("sounddeck-library-\(UUID().uuidString).mp3")
 
+            do {
                 try await service.downloadSound(from: sound.mp3, to: tempFile)
 
                 // Import via SoundStore on the main thread
                 await MainActor.run {
-                    let imported = appDelegate.soundStore.importSound(url: tempFile)
+                    let imported = appDelegate.soundStore.importSound(url: tempFile, preferredName: sound.title)
 
                     downloadingIDs.remove(sound.id)
 
@@ -461,15 +536,28 @@ struct ProLibraryView: View {
                     }
 
                     // Clean up temp file
-                    try? FileManager.default.removeItem(at: tempFile)
+                    _ = try? FileManager.default.removeItem(at: tempFile)
                 }
             } catch {
                 logger.error("Download failed for \(sound.title): \(error.localizedDescription)")
+                _ = try? FileManager.default.removeItem(at: tempFile)
                 await MainActor.run {
-                    downloadingIDs.remove(sound.id)
+                    _ = downloadingIDs.remove(sound.id)
                 }
             }
         }
+    }
+
+    private func cancelActiveWork() {
+        searchTask?.cancel()
+        searchTask = nil
+        previewTask?.cancel()
+        previewTask = nil
+        if previewingID != nil,
+           let appDelegate = NSApplication.shared.delegate as? AppDelegate {
+            appDelegate.previewEngine.stopPreview()
+        }
+        previewingID = nil
     }
 }
 

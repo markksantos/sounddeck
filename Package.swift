@@ -7,15 +7,12 @@ let package = Package(
     products: [
         .library(name: "SoundDeckCommon", targets: ["SoundDeckCommon"]),
     ],
-    dependencies: [
-        .package(url: "https://github.com/sindresorhus/KeyboardShortcuts", from: "2.0.0"),
-        .package(url: "https://github.com/sparkle-project/Sparkle", from: "2.5.0"),
-    ],
     targets: [
         .target(
             name: "SoundDeckCommon",
-            path: "SoundDeckCommon/Sources",
-            publicHeadersPath: "../include/SoundDeckCommon"
+            path: "SoundDeckCommon",
+            sources: ["Sources"],
+            publicHeadersPath: "include"
         ),
         .testTarget(
             name: "SoundDeckTests",

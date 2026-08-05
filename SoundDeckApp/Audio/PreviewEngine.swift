@@ -19,7 +19,7 @@ final class PreviewEngine {
     private let engine = AVAudioEngine()
 
     // Shared format for all monitoring playback (48 kHz mono)
-    private let monitorFormat: AVAudioFormat
+    private let monitorFormat: AVAudioFormat?
 
     // -- Preview (existing long-press behavior) --
     private let previewPlayerNode = AVAudioPlayerNode()
@@ -39,6 +39,8 @@ final class PreviewEngine {
         didSet {
             if let deviceID = outputDeviceID {
                 setOutputDevice(deviceID)
+            } else if let defaultDeviceID = defaultOutputDeviceID() {
+                setOutputDevice(defaultDeviceID)
             }
         }
     }
@@ -49,13 +51,18 @@ final class PreviewEngine {
         self.monitorFormat = AVAudioFormat(
             standardFormatWithSampleRate: 48000.0,
             channels: 1
-        )!
+        )
         setup()
     }
 
     // MARK: - Setup
 
     private func setup() {
+        guard let monitorFormat else {
+            logger.error("Failed to create preview monitor format")
+            return
+        }
+
         let mixer = engine.mainMixerNode
 
         // Preview player (existing)
@@ -103,6 +110,30 @@ final class PreviewEngine {
         } else {
             logger.info("Preview output device set to \(deviceID)")
         }
+    }
+
+    private func defaultOutputDeviceID() -> AudioObjectID? {
+        var address = AudioObjectPropertyAddress(
+            mSelector: kAudioHardwarePropertyDefaultOutputDevice,
+            mScope: kAudioObjectPropertyScopeGlobal,
+            mElement: kAudioObjectPropertyElementMain
+        )
+        var deviceID = AudioObjectID(0)
+        var size = UInt32(MemoryLayout<AudioObjectID>.size)
+        let status = AudioObjectGetPropertyData(
+            AudioObjectID(kAudioObjectSystemObject),
+            &address,
+            0,
+            nil,
+            &size,
+            &deviceID
+        )
+
+        guard status == noErr, deviceID != 0 else {
+            logger.warning("Failed to resolve default preview output device: \(status)")
+            return nil
+        }
+        return deviceID
     }
 
     // MARK: - Engine Lifecycle

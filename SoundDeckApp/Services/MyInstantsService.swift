@@ -65,30 +65,41 @@ final class MyInstantsService {
 
     /// Search sounds by query string.
     func search(query: String) async throws -> [Sound] {
-        guard let encoded = query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+        guard let url = makeURL(path: "/search", queryItems: [URLQueryItem(name: "q", value: query)]) else {
             throw ServiceError.invalidURL
         }
-        return try await fetchSounds(endpoint: "/search?q=\(encoded)")
+        return try await fetchSounds(url: url, description: "/search")
     }
 
     /// Fetch trending sounds (US region).
     func trending() async throws -> [Sound] {
-        return try await fetchSounds(endpoint: "/trending?q=us")
+        guard let url = makeURL(path: "/trending", queryItems: [URLQueryItem(name: "q", value: "us")]) else {
+            throw ServiceError.invalidURL
+        }
+        return try await fetchSounds(url: url, description: "/trending")
     }
 
     /// Fetch most popular / best sounds.
     func best() async throws -> [Sound] {
-        return try await fetchSounds(endpoint: "/best")
+        guard let url = makeURL(path: "/best") else {
+            throw ServiceError.invalidURL
+        }
+        return try await fetchSounds(url: url, description: "/best")
     }
 
     /// Fetch recently uploaded sounds.
     func recent() async throws -> [Sound] {
-        return try await fetchSounds(endpoint: "/recent")
+        guard let url = makeURL(path: "/recent") else {
+            throw ServiceError.invalidURL
+        }
+        return try await fetchSounds(url: url, description: "/recent")
     }
 
     /// Download an mp3 from a URL string to a local destination.
     func downloadSound(from urlString: String, to destination: URL) async throws {
-        guard let url = URL(string: urlString) else {
+        guard let url = URL(string: urlString),
+              url.scheme?.lowercased() == "https",
+              url.host?.isEmpty == false else {
             throw ServiceError.invalidURL
         }
 
@@ -117,12 +128,15 @@ final class MyInstantsService {
 
     // MARK: - Private
 
-    private func fetchSounds(endpoint: String) async throws -> [Sound] {
-        guard let url = URL(string: baseURL + endpoint) else {
-            throw ServiceError.invalidURL
-        }
+    private func makeURL(path: String, queryItems: [URLQueryItem] = []) -> URL? {
+        var components = URLComponents(string: baseURL)
+        components?.path = path
+        components?.queryItems = queryItems.isEmpty ? nil : queryItems
+        return components?.url
+    }
 
-        logger.info("Fetching: \(endpoint)")
+    private func fetchSounds(url: URL, description: String) async throws -> [Sound] {
+        logger.info("Fetching: \(description)")
 
         let data: Data
         let response: URLResponse
@@ -130,23 +144,23 @@ final class MyInstantsService {
         do {
             (data, response) = try await session.data(from: url)
         } catch {
-            logger.error("Network error for \(endpoint): \(error.localizedDescription)")
+            logger.error("Network error for \(description): \(error.localizedDescription)")
             throw ServiceError.networkError(error)
         }
 
         if let httpResponse = response as? HTTPURLResponse,
            !(200...299).contains(httpResponse.statusCode) {
-            logger.error("HTTP \(httpResponse.statusCode) for \(endpoint)")
+            logger.error("HTTP \(httpResponse.statusCode) for \(description)")
             throw ServiceError.invalidResponse(httpResponse.statusCode)
         }
 
         do {
             let decoder = JSONDecoder()
             let sounds = try decoder.decode([Sound].self, from: data)
-            logger.info("Fetched \(sounds.count) sounds from \(endpoint)")
+            logger.info("Fetched \(sounds.count) sounds from \(description)")
             return sounds
         } catch {
-            logger.error("Decoding error for \(endpoint): \(error.localizedDescription)")
+            logger.error("Decoding error for \(description): \(error.localizedDescription)")
             throw ServiceError.decodingError(error)
         }
     }

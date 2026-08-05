@@ -11,6 +11,7 @@ final class SoundPlayer {
     private let mixerNode: AVAudioMixerNode
     private let appState: AppState
     private let logger = Logger(subsystem: "com.sounddeck.app", category: "SoundPlayer")
+    private let targetFormat: AVAudioFormat?
 
     private static let poolSize = 8
 
@@ -28,20 +29,25 @@ final class SoundPlayer {
         self.engine = engine
         self.mixerNode = mixerNode
         self.appState = appState
+        self.targetFormat = AVAudioFormat(
+            standardFormatWithSampleRate: kSoundDeckSampleRate,
+            channels: AVAudioChannelCount(kSoundDeckChannelCount)
+        )
         setupPlayerPool()
     }
 
     // MARK: - Pool Setup
 
     private func setupPlayerPool() {
+        guard let targetFormat else {
+            logger.error("Failed to create target playback format")
+            return
+        }
+
         for _ in 0..<Self.poolSize {
             let playerNode = AVAudioPlayerNode()
             engine.attach(playerNode)
-            let format = AVAudioFormat(
-                standardFormatWithSampleRate: kSoundDeckSampleRate,
-                channels: AVAudioChannelCount(kSoundDeckChannelCount)
-            )!
-            engine.connect(playerNode, to: mixerNode, format: format)
+            engine.connect(playerNode, to: mixerNode, format: targetFormat)
             playerNodes.append(playerNode)
         }
         logger.info("Created \(Self.poolSize) player nodes in pool")
@@ -99,10 +105,10 @@ final class SoundPlayer {
             try audioFile.read(into: sourceBuffer, frameCount: frameCount)
 
             // Convert to our target format if needed
-            let targetFormat = AVAudioFormat(
-                standardFormatWithSampleRate: kSoundDeckSampleRate,
-                channels: AVAudioChannelCount(kSoundDeckChannelCount)
-            )!
+            guard let targetFormat else {
+                logger.error("Target playback format is unavailable for: \(sound.name)")
+                return
+            }
 
             if fileFormat.sampleRate != targetFormat.sampleRate ||
                fileFormat.channelCount != targetFormat.channelCount {

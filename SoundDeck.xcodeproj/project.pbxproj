@@ -20,6 +20,7 @@
 		3B20E524C808E41A1BDFA09D /* silence.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7178567BD9167232F086519B /* silence.wav */; };
 		3C2A63BAE508C8DC0F3ECD43 /* SupportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C35B9277BA234BDA9FE8EC0C /* SupportView.swift */; };
 		3CB94F9B1871014E39B6A639 /* libSoundDeckCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 264722B1D6D75C588B41CC34 /* libSoundDeckCommon.a */; };
+		3F989A961B19266EB138485D /* AppIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = 44A22F9C51E78FC36BC9D0EB /* AppIcon.icns */; };
 		4F0DE6561C72D3934B6F5E6D /* HotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A6C030F5DD816FEEFD3E339 /* HotkeyManager.swift */; };
 		4F43B1BD2091A4EDE8AA458E /* WatermarkPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 680ACAB11E8DD7F6A846A876 /* WatermarkPlayer.swift */; };
 		4FF212122FF2E9D73EE0FA89 /* PrivacyPolicyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8B3E647ABB0783B0F3C134D /* PrivacyPolicyView.swift */; };
@@ -141,6 +142,7 @@
 		4198E453B6CDF69136467462 /* MyInstantsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyInstantsService.swift; sourceTree = "<group>"; };
 		42BF0630688075CA3B8433C9 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		42E2F433BF5B2393AD15D51C /* SoundDeckTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SoundDeckTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		44A22F9C51E78FC36BC9D0EB /* AppIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AppIcon.icns; sourceTree = "<group>"; };
 		46BCAB8C92F578D38280412F /* baby_cry.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = baby_cry.wav; sourceTree = "<group>"; };
 		4CAB81C55BC831C508F1B84B /* SoundDeckApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundDeckApp.swift; sourceTree = "<group>"; };
 		523BFB3F20D74A5E34D61040 /* RingBuffer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = RingBuffer.c; sourceTree = "<group>"; };
@@ -358,6 +360,7 @@
 		D4512219B22EBB33D5DFEC45 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				44A22F9C51E78FC36BC9D0EB /* AppIcon.icns */,
 				017482DF11D2222E26BCA43B /* DefaultSounds */,
 			);
 			path = Resources;
@@ -566,6 +569,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3F989A961B19266EB138485D /* AppIcon.icns in Resources */,
 				E34E80166F5F3D9DE474CCE5 /* alarm.wav in Resources */,
 				B9620CC0B02F78D11A8D1B46 /* applause.wav in Resources */,
 				A619C201AA1A7F190CCF26B9 /* baby_cry.wav in Resources */,
@@ -763,6 +767,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.sounddeck.app;
 				SDKROOT = macosx;
+				SPARKLE_PUBLIC_ED_KEY = "";
 				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/SoundDeckCommon/include";
 			};
 			name = Release;
@@ -806,6 +811,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.sounddeck.app;
 				SDKROOT = macosx;
+				SPARKLE_PUBLIC_ED_KEY = "";
 				SWIFT_INCLUDE_PATHS = "$(SRCROOT)/SoundDeckCommon/include";
 			};
 			name = Debug;

@@ -56,6 +56,9 @@ struct OnboardingView: View {
                 )
             }
         )
+        .onAppear {
+            refreshSetupStatus()
+        }
     }
 
     // MARK: - Step 1: Welcome
@@ -342,13 +345,14 @@ struct OnboardingView: View {
 
             if currentStep < totalSteps - 1 {
                 Button {
+                    guard canAdvanceFromCurrentStep else { return }
                     isNavigatingForward = true
                     withAnimation(.easeInOut(duration: 0.3)) {
                         currentStep += 1
                     }
                 } label: {
                     HStack(spacing: 4) {
-                        Text(skipAllowed ? "Next" : "Skip")
+                        Text("Next")
                         Image(systemName: "arrow.right")
                             .font(.system(size: 11))
                     }
@@ -358,6 +362,7 @@ struct OnboardingView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .tint(.accentColor)
+                .disabled(!canAdvanceFromCurrentStep)
             } else {
                 Button {
                     completeOnboarding()
@@ -375,7 +380,7 @@ struct OnboardingView: View {
 
     // MARK: - Actions
 
-    private var skipAllowed: Bool {
+    private var canAdvanceFromCurrentStep: Bool {
         switch currentStep {
         case 1: return appState.isDriverInstalled
         case 2: return appState.hasMicPermission
@@ -387,13 +392,16 @@ struct OnboardingView: View {
         isInstallingDriver = true
 
         DriverInstaller.install { result in
-            switch result {
-            case .success:
-                appState.isDriverInstalled = true
-            case .failure:
-                appState.isDriverInstalled = DriverInstaller.isInstalled
+            DispatchQueue.main.async {
+                switch result {
+                case .success:
+                    appState.isDriverInstalled = true
+                case .failure:
+                    appState.isDriverInstalled = DriverInstaller.isInstalled
+                }
+                refreshSetupStatus()
+                isInstallingDriver = false
             }
-            isInstallingDriver = false
         }
     }
 
@@ -403,6 +411,7 @@ struct OnboardingView: View {
         switch AVCaptureDevice.authorizationStatus(for: .audio) {
         case .authorized:
             appState.hasMicPermission = true
+            refreshSetupStatus()
             isRequestingMic = false
 
         case .notDetermined:
@@ -418,11 +427,18 @@ struct OnboardingView: View {
             if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Microphone") {
                 NSWorkspace.shared.open(url)
             }
+            refreshSetupStatus()
             isRequestingMic = false
 
         @unknown default:
+            refreshSetupStatus()
             isRequestingMic = false
         }
+    }
+
+    private func refreshSetupStatus() {
+        appState.isDriverInstalled = DriverInstaller.isInstalled
+        appState.hasMicPermission = AVCaptureDevice.authorizationStatus(for: .audio) == .authorized
     }
 
     private func completeOnboarding() {

@@ -9,8 +9,10 @@ struct FolderSidebarView: View {
     @State private var newFolderName = ""
     @State private var renamingFolderID: UUID?
     @State private var renameFolderText = ""
+    @State private var folderPendingDeletion: SoundFolder?
     @State private var showProLibrary = false
     @State private var showUpgrade = false
+    private let maxFolderNameLength = 80
 
     var body: some View {
         VStack(spacing: 0) {
@@ -61,7 +63,7 @@ struct FolderSidebarView: View {
                 let trimmed = newFolderName.trimmingCharacters(in: .whitespaces)
                 guard !trimmed.isEmpty else { return }
                 let folder = SoundFolder(
-                    name: trimmed,
+                    name: String(trimmed.prefix(maxFolderNameLength)),
                     iconName: "folder.fill",
                     color: randomFolderColor()
                 )
@@ -75,12 +77,31 @@ struct FolderSidebarView: View {
             TextField("Name", text: $renameFolderText)
             Button("Cancel", role: .cancel) { renamingFolderID = nil }
             Button("Rename") {
+                let trimmed = renameFolderText.trimmingCharacters(in: .whitespacesAndNewlines)
+                guard !trimmed.isEmpty else {
+                    renamingFolderID = nil
+                    return
+                }
                 if let id = renamingFolderID,
                    let index = appState.folders.firstIndex(where: { $0.id == id }) {
-                    appState.folders[index].name = renameFolderText
+                    appState.folders[index].name = String(trimmed.prefix(maxFolderNameLength))
                 }
                 renamingFolderID = nil
             }
+        }
+        .alert("Delete Folder?", isPresented: Binding(
+            get: { folderPendingDeletion != nil },
+            set: { if !$0 { folderPendingDeletion = nil } }
+        )) {
+            Button("Cancel", role: .cancel) { folderPendingDeletion = nil }
+            Button("Delete", role: .destructive) {
+                if let folder = folderPendingDeletion {
+                    deleteFolder(folder)
+                }
+                folderPendingDeletion = nil
+            }
+        } message: {
+            Text(folderDeleteMessage)
         }
         .sheet(isPresented: $showProLibrary) {
             ProLibraryView()
@@ -213,16 +234,7 @@ struct FolderSidebarView: View {
             }
 
             Button(role: .destructive) {
-                // Move sounds out of folder before deleting
-                for i in appState.sounds.indices {
-                    if appState.sounds[i].folderID == folder.id {
-                        appState.sounds[i].folderID = nil
-                    }
-                }
-                appState.folders.removeAll { $0.id == folder.id }
-                if appState.selectedFolderID == folder.id {
-                    appState.selectedFolderID = nil
-                }
+                folderPendingDeletion = folder
             } label: {
                 Label("Delete Folder", systemImage: "trash")
             }
@@ -234,6 +246,28 @@ struct FolderSidebarView: View {
     private func randomFolderColor() -> Color {
         let colors: [Color] = [.blue, .purple, .pink, .orange, .green, .cyan, .indigo, .mint, .teal, .red]
         return colors.randomElement() ?? .blue
+    }
+
+    private var folderDeleteMessage: String {
+        guard let folder = folderPendingDeletion else { return "" }
+        let count = appState.sounds.filter { $0.folderID == folder.id }.count
+
+        if count == 0 {
+            return "This removes the folder. No sounds will be deleted."
+        }
+
+        let noun = count == 1 ? "sound" : "sounds"
+        return "This removes the folder and moves \(count) \(noun) back to All Sounds. No audio files will be deleted."
+    }
+
+    private func deleteFolder(_ folder: SoundFolder) {
+        for i in appState.sounds.indices where appState.sounds[i].folderID == folder.id {
+            appState.sounds[i].folderID = nil
+        }
+        appState.folders.removeAll { $0.id == folder.id }
+        if appState.selectedFolderID == folder.id {
+            appState.selectedFolderID = nil
+        }
     }
 }
 

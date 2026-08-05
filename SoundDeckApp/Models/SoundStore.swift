@@ -17,10 +17,15 @@ final class SoundStore {
     private static let foldersFileName = "folders.json"
     private static let audioSubdirectory = "Audio"
     private static let hasLaunchedKey = "SoundDeck_HasLaunchedBefore"
+    private static let audioExtensions: Set<String> = ["wav", "mp3", "m4a", "aac", "aif", "aiff", "caf"]
+    private static let maxImportedNameLength = 80
 
     /// The root Application Support directory for SoundDeck.
     static var appSupportDirectory: URL {
-        let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
+            ?? FileManager.default.homeDirectoryForCurrentUser
+                .appendingPathComponent("Library", isDirectory: true)
+                .appendingPathComponent("Application Support", isDirectory: true)
         return appSupport.appendingPathComponent("SoundDeck")
     }
 
@@ -126,14 +131,20 @@ final class SoundStore {
     /// Import an audio file from an external URL into the app's audio directory.
     /// Returns the newly created SoundItem, or nil on failure.
     @discardableResult
-    func importSound(url: URL) -> SoundItem? {
+    func importSound(url: URL, preferredName: String? = nil, folderID: UUID? = nil) -> SoundItem? {
         let accessing = url.startAccessingSecurityScopedResource()
         defer {
             if accessing { url.stopAccessingSecurityScopedResource() }
         }
 
-        let originalName = url.deletingPathExtension().lastPathComponent
-        let fileExtension = url.pathExtension
+        let preferredStem = preferredName?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let rawName = preferredStem.flatMap { $0.isEmpty ? nil : $0 } ?? url.deletingPathExtension().lastPathComponent
+        let originalName = sanitizedFileStem(from: rawName)
+        let fileExtension = url.pathExtension.lowercased()
+        guard Self.audioExtensions.contains(fileExtension) else {
+            logger.warning("Unsupported audio extension: \(fileExtension)")
+            return nil
+        }
 
         // Generate unique filename to avoid collisions
         let uniqueID = UUID().uuidString.prefix(8)
@@ -154,12 +165,11 @@ final class SoundStore {
             name: originalName,
             fileName: relativePath,
             color: Self.randomPadColor(),
-            iconName: "waveform"
+            iconName: "waveform",
+            folderID: folderID
         )
 
-        DispatchQueue.main.async {
-            self.appState.sounds.append(sound)
-        }
+        appendSound(sound)
         // Auto-save observer will persist when $sounds fires
         logger.info("Imported sound: \(originalName)")
         return sound
@@ -169,6 +179,7 @@ final class SoundStore {
         // Remove any registered hotkey handler for this sound
         let hotkeyName = KeyboardShortcuts.Name.forSound(id: sound.id)
         KeyboardShortcuts.removeHandler(for: hotkeyName)
+        KeyboardShortcuts.setShortcut(nil, for: hotkeyName)
 
         // Remove the audio file
         let fileURL = Self.appSupportDirectory.appendingPathComponent(sound.fileName)
@@ -185,6 +196,50 @@ final class SoundStore {
             self.appState.sounds.removeAll { $0.id == sound.id }
         }
         logger.info("Deleted sound: \(sound.name)")
+    }
+
+    @discardableResult
+    func duplicateSound(_ sound: SoundItem) -> SoundItem? {
+        let sourceURL = Self.appSupportDirectory.appendingPathComponent(sound.fileName)
+        guard fileManager.fileExists(atPath: sourceURL.path) else {
+            logger.warning("Cannot duplicate missing audio file: \(sound.fileName)")
+            return nil
+        }
+
+        let fileExtension = sourceURL.pathExtension.lowercased()
+        guard Self.audioExtensions.contains(fileExtension) else {
+            logger.warning("Cannot duplicate unsupported audio extension: \(fileExtension)")
+            return nil
+        }
+
+        let duplicateName = uniqueDuplicateName(for: sound.name)
+        let fileStem = sanitizedFileStem(from: duplicateName)
+        let uniqueID = UUID().uuidString.prefix(8)
+        let destFileName = "\(fileStem)_\(uniqueID).\(fileExtension)"
+        let destURL = Self.audioDirectory.appendingPathComponent(destFileName)
+
+        do {
+            try fileManager.copyItem(at: sourceURL, to: destURL)
+        } catch {
+            logger.error("Failed to duplicate audio file: \(error.localizedDescription)")
+            return nil
+        }
+
+        let duplicate = SoundItem(
+            name: duplicateName,
+            fileName: "Audio/\(destFileName)",
+            color: sound.color,
+            iconName: sound.iconName,
+            hotkeyName: nil,
+            folderID: sound.folderID,
+            trimStart: sound.trimStart,
+            trimEnd: sound.trimEnd,
+            volume: sound.volume
+        )
+
+        appendSound(duplicate)
+        logger.info("Duplicated sound: \(sound.name)")
+        return duplicate
     }
 
     // MARK: - Folders
@@ -232,27 +287,18 @@ final class SoundStore {
         logger.info("Created default folders")
     }
 
-    /// Copies default sounds from Resources/DefaultSounds/ in the app bundle.
+    /// Copies default sounds from the app bundle. Xcode may flatten resources,
+    /// so support both Resources/DefaultSounds and top-level bundled audio files.
     private func populateDefaultSounds() {
-        guard let defaultSoundsURL = Bundle.main.url(forResource: "DefaultSounds", withExtension: nil) else {
-            logger.info("No DefaultSounds directory found in bundle, skipping default sound population")
-            return
-        }
-
         let effectsFolderID = appState.folders.first(where: { $0.name == "Effects" })?.id
 
         do {
-            let soundFiles = try fileManager.contentsOfDirectory(
-                at: defaultSoundsURL,
-                includingPropertiesForKeys: nil,
-                options: [.skipsHiddenFiles]
-            )
+            let soundFiles = try bundledDefaultSoundURLs()
 
-            let audioExtensions: Set<String> = ["wav", "mp3", "m4a", "aac", "aif", "aiff", "caf"]
             var importedSounds: [SoundItem] = []
 
             for fileURL in soundFiles {
-                guard audioExtensions.contains(fileURL.pathExtension.lowercased()) else { continue }
+                guard Self.audioExtensions.contains(fileURL.pathExtension.lowercased()) else { continue }
 
                 let originalName = fileURL.deletingPathExtension().lastPathComponent
                 let destFileName = fileURL.lastPathComponent
@@ -290,5 +336,60 @@ final class SoundStore {
 
     private static func randomPadColor() -> Color {
         padColors.randomElement() ?? .blue
+    }
+
+    private func appendSound(_ sound: SoundItem) {
+        if Thread.isMainThread {
+            appState.sounds.append(sound)
+        } else {
+            DispatchQueue.main.async {
+                self.appState.sounds.append(sound)
+            }
+        }
+    }
+
+    private func bundledDefaultSoundURLs() throws -> [URL] {
+        if let defaultSoundsURL = Bundle.main.url(forResource: "DefaultSounds", withExtension: nil) {
+            return try fileManager.contentsOfDirectory(
+                at: defaultSoundsURL,
+                includingPropertiesForKeys: nil,
+                options: [.skipsHiddenFiles]
+            )
+        }
+
+        let topLevelAudio = Self.audioExtensions.flatMap { ext in
+            Bundle.main.urls(forResourcesWithExtension: ext, subdirectory: nil) ?? []
+        }
+
+        if topLevelAudio.isEmpty {
+            logger.info("No default bundled audio files found")
+        }
+
+        return topLevelAudio.sorted { $0.lastPathComponent < $1.lastPathComponent }
+    }
+
+    private func sanitizedFileStem(from name: String) -> String {
+        let allowed = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: " -_"))
+        let cleaned = name.unicodeScalars
+            .map { allowed.contains($0) ? String($0) : "-" }
+            .joined()
+            .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let bounded = String(cleaned.prefix(Self.maxImportedNameLength))
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return bounded.isEmpty ? "Sound" : bounded
+    }
+
+    private func uniqueDuplicateName(for name: String) -> String {
+        let baseName = sanitizedFileStem(from: name)
+        let existingNames = Set(appState.sounds.map { $0.name })
+        let firstCandidate = "\(baseName) Copy"
+        guard existingNames.contains(firstCandidate) else { return firstCandidate }
+
+        var index = 2
+        while existingNames.contains("\(firstCandidate) \(index)") {
+            index += 1
+        }
+        return "\(firstCandidate) \(index)"
     }
 }

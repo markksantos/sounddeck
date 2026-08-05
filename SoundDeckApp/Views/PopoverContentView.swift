@@ -130,7 +130,7 @@ struct PopoverContentView: View {
                 ZStack(alignment: .topTrailing) {
                     Image(systemName: "waveform.circle.fill")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(appState.isVoiceChangerEnabled ? .purple : .primary)
+                        .foregroundColor(appState.isVoiceChangerActive ? .purple : .primary)
 
                     if !appState.canUseVoiceChanger {
                         Image(systemName: "lock.fill")
@@ -142,7 +142,7 @@ struct PopoverContentView: View {
                     .frame(width: 28, height: 28)
                     .background(
                         RoundedRectangle(cornerRadius: 6)
-                            .fill(appState.isVoiceChangerEnabled ? Color.purple.opacity(0.2) : Color.white.opacity(0.08))
+                            .fill(appState.isVoiceChangerActive ? Color.purple.opacity(0.2) : Color.white.opacity(0.08))
                     )
             }
             .buttonStyle(.plain)

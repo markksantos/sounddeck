@@ -15,6 +15,13 @@ struct SettingsView: View {
     @State private var showSupport = false
     @State private var inputDevices: [AudioDevice] = []
     @State private var outputDevices: [AudioDevice] = []
+    @State private var isInstallingDriver = false
+    @State private var isUninstallingDriver = false
+    @State private var driverStatusMessage: String?
+    @State private var driverStatusIsError = false
+    @State private var isRestoringPurchases = false
+    @State private var restoreStatusMessage: String?
+    @State private var restoreStatusIsError = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -74,7 +81,7 @@ struct SettingsView: View {
 
                     Picker("Input", selection: Binding(
                         get: { appState.selectedInputDeviceID ?? 0 },
-                        set: { appState.selectedInputDeviceID = $0 }
+                        set: { appState.selectedInputDeviceID = $0 == 0 ? nil : $0 }
                     )) {
                         Text("System Default").tag(UInt32(0))
                         ForEach(inputDevices) { device in
@@ -92,7 +99,7 @@ struct SettingsView: View {
 
                     Picker("Output", selection: Binding(
                         get: { appState.selectedOutputDeviceID ?? 0 },
-                        set: { appState.selectedOutputDeviceID = $0 }
+                        set: { appState.selectedOutputDeviceID = $0 == 0 ? nil : $0 }
                     )) {
                         Text("System Default").tag(UInt32(0))
                         ForEach(outputDevices) { device in
@@ -110,41 +117,131 @@ struct SettingsView: View {
 
     private var hotkeySection: some View {
         SettingsSection(title: "Hotkeys", icon: "keyboard") {
-            if appState.sounds.isEmpty {
-                Text("Add sounds to configure hotkeys.")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            } else {
+            VStack(alignment: .leading, spacing: 12) {
                 VStack(spacing: 8) {
-                    ForEach(appState.sounds) { sound in
-                        HStack {
-                            Image(systemName: sound.iconName)
-                                .font(.system(size: 11))
-                                .foregroundColor(sound.color)
-                                .frame(width: 18)
+                    hotkeyRecorderRow(
+                        title: "Mute microphone",
+                        subtitle: "Free",
+                        name: .globalMute
+                    )
 
-                            Text(sound.name)
-                                .font(.system(size: 12))
-                                .lineLimit(1)
-                                .truncationMode(.tail)
+                    hotkeyRecorderRow(
+                        title: "Stop all sounds",
+                        subtitle: "Free",
+                        name: .stopAll
+                    )
 
-                            Spacer()
+                    if appState.canUseVoiceChanger {
+                        hotkeyRecorderRow(
+                            title: "Toggle voice changer",
+                            subtitle: "Pro",
+                            name: .toggleVoiceChanger
+                        )
+                    } else {
+                        lockedHotkeyRow(title: "Toggle voice changer", subtitle: "Pro")
+                    }
+                }
 
-                            if appState.canUsePerSoundHotkeys {
-                                KeyboardShortcuts.Recorder(for: .forSound(id: sound.id))
-                                    .frame(width: 120)
-                            } else {
-                                Label("Pro", systemImage: "lock.fill")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary.opacity(0.5))
-                            }
+                Divider()
+
+                Text("Sound Pads")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundColor(.secondary)
+
+                if appState.sounds.isEmpty {
+                    Text("Add sounds to configure per-sound hotkeys.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                } else {
+                    VStack(spacing: 8) {
+                        ForEach(appState.sounds) { sound in
+                            soundHotkeyRow(sound)
                         }
-                        .padding(.vertical, 2)
                     }
                 }
             }
         }
+    }
+
+    private func hotkeyRecorderRow(
+        title: String,
+        subtitle: String,
+        name: KeyboardShortcuts.Name
+    ) -> some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.system(size: 12))
+                    .foregroundColor(.primary)
+
+                Text(subtitle)
+                    .font(.system(size: 10))
+                    .foregroundColor(.secondary)
+            }
+
+            Spacer()
+
+            KeyboardShortcuts.Recorder(for: name)
+                .frame(width: 120)
+        }
+        .padding(.vertical, 2)
+    }
+
+    private func lockedHotkeyRow(title: String, subtitle: String) -> some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.system(size: 12))
+                    .foregroundColor(.primary)
+
+                Text(subtitle)
+                    .font(.system(size: 10))
+                    .foregroundColor(.secondary)
+            }
+
+            Spacer()
+
+            Label("Pro", systemImage: "lock.fill")
+                .font(.caption)
+                .foregroundColor(.secondary.opacity(0.5))
+        }
+        .padding(.vertical, 2)
+    }
+
+    private func soundHotkeyRow(_ sound: SoundItem) -> some View {
+        HStack {
+            Image(systemName: sound.iconName)
+                .font(.system(size: 11))
+                .foregroundColor(sound.color)
+                .frame(width: 18)
+
+            Text(sound.name)
+                .font(.system(size: 12))
+                .lineLimit(1)
+                .truncationMode(.tail)
+
+            Spacer()
+
+            if appState.canUsePerSoundHotkeys {
+                let hotkeyName = KeyboardShortcuts.Name.forSound(id: sound.id)
+                KeyboardShortcuts.Recorder(for: hotkeyName, onChange: { shortcut in
+                    syncSoundHotkeyMetadata(id: sound.id, shortcut: shortcut)
+                })
+                    .frame(width: 120)
+                    .onAppear {
+                        syncSoundHotkeyMetadata(
+                            id: sound.id,
+                            shortcut: KeyboardShortcuts.getShortcut(for: hotkeyName)
+                        )
+                    }
+            } else {
+                Label("Pro", systemImage: "lock.fill")
+                    .font(.caption)
+                    .foregroundColor(.secondary.opacity(0.5))
+            }
+        }
+        .padding(.vertical, 2)
     }
 
     // MARK: - Subscription Section
@@ -198,12 +295,27 @@ struct SettingsView: View {
                 Button {
                     restoreSubscription()
                 } label: {
-                    Text("Restore Purchases")
-                        .font(.system(size: 11))
-                        .foregroundColor(.secondary)
-                        .underline()
+                    HStack(spacing: 6) {
+                        if isRestoringPurchases {
+                            ProgressView()
+                                .scaleEffect(0.55)
+                        }
+                        Text(isRestoringPurchases ? "Restoring..." : "Restore Purchases")
+                            .font(.system(size: 11))
+                            .foregroundColor(.secondary)
+                            .underline(!isRestoringPurchases)
+                    }
                 }
                 .buttonStyle(.plain)
+                .disabled(isRestoringPurchases)
+
+                if let restoreStatusMessage {
+                    Text(restoreStatusMessage)
+                        .font(.system(size: 11))
+                        .foregroundColor(restoreStatusIsError ? .red : .secondary)
+                        .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity)
+                }
             }
         }
         .sheet(isPresented: $showUpgrade) {
@@ -233,28 +345,50 @@ struct SettingsView: View {
                     Button {
                         installDriver()
                     } label: {
-                        Label(
-                            appState.isDriverInstalled ? "Reinstall Driver" : "Install Driver",
-                            systemImage: "arrow.down.circle.fill"
-                        )
+                        HStack(spacing: 6) {
+                            if isInstallingDriver {
+                                ProgressView()
+                                    .scaleEffect(0.7)
+                            } else {
+                                Image(systemName: "arrow.down.circle.fill")
+                            }
+                            Text(isInstallingDriver ? "Installing..." : (appState.isDriverInstalled ? "Reinstall Driver" : "Install Driver"))
+                        }
                         .font(.system(size: 12, weight: .medium))
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 6)
                     }
                     .buttonStyle(.borderedProminent)
                     .tint(appState.isDriverInstalled ? .secondary : .accentColor)
+                    .disabled(isInstallingDriver || isUninstallingDriver)
 
                     if appState.isDriverInstalled {
                         Button {
                             uninstallDriver()
                         } label: {
-                            Label("Uninstall", systemImage: "trash")
-                                .font(.system(size: 12, weight: .medium))
-                                .padding(.vertical, 6)
+                            HStack(spacing: 6) {
+                                if isUninstallingDriver {
+                                    ProgressView()
+                                        .scaleEffect(0.7)
+                                } else {
+                                    Image(systemName: "trash")
+                                }
+                                Text(isUninstallingDriver ? "Uninstalling..." : "Uninstall")
+                            }
+                            .font(.system(size: 12, weight: .medium))
+                            .padding(.vertical, 6)
                         }
                         .buttonStyle(.bordered)
                         .tint(.red)
+                        .disabled(isInstallingDriver || isUninstallingDriver)
                     }
+                }
+
+                if let driverStatusMessage {
+                    Text(driverStatusMessage)
+                        .font(.system(size: 11))
+                        .foregroundColor(driverStatusIsError ? .red : .secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
         }
@@ -285,6 +419,14 @@ struct SettingsView: View {
                         .padding(.vertical, 6)
                 }
                 .buttonStyle(.bordered)
+                .disabled(!isUpdateCheckingConfigured)
+
+                if !isUpdateCheckingConfigured {
+                    Text("Update checks are enabled in signed release builds.")
+                        .font(.system(size: 11))
+                        .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
 
                 Divider()
 
@@ -420,9 +562,16 @@ struct SettingsView: View {
                 mElement: kAudioObjectPropertyElementMain
             )
 
-            var name: CFString = "" as CFString
-            var nameSize = UInt32(MemoryLayout<CFString>.size)
-            guard AudioObjectGetPropertyData(deviceID, &nameAddress, 0, nil, &nameSize, &name) == noErr else {
+            let namePointer = UnsafeMutablePointer<CFString?>.allocate(capacity: 1)
+            namePointer.initialize(to: nil)
+            defer {
+                namePointer.deinitialize(count: 1)
+                namePointer.deallocate()
+            }
+
+            var nameSize = UInt32(MemoryLayout<CFString?>.size)
+            guard AudioObjectGetPropertyData(deviceID, &nameAddress, 0, nil, &nameSize, namePointer) == noErr,
+                  let name = namePointer.pointee else {
                 return nil
             }
 
@@ -434,36 +583,74 @@ struct SettingsView: View {
 
     private func restoreSubscription() {
         guard let appDelegate = NSApplication.shared.delegate as? AppDelegate else { return }
+        guard !isRestoringPurchases else { return }
+
+        isRestoringPurchases = true
+        restoreStatusMessage = nil
+
         Task {
-            await appDelegate.subscriptionManager.restorePurchases()
+            let manager = appDelegate.subscriptionManager
+            await manager.restorePurchases()
+
+            await MainActor.run {
+                isRestoringPurchases = false
+                if let error = manager.purchaseError {
+                    restoreStatusIsError = true
+                    restoreStatusMessage = error
+                } else if appState.isPro {
+                    restoreStatusIsError = false
+                    restoreStatusMessage = "Purchases restored. SoundDeck Pro is active."
+                } else {
+                    restoreStatusIsError = false
+                    restoreStatusMessage = "No active SoundDeck Pro subscription was found."
+                }
+            }
         }
     }
 
     private func installDriver() {
+        guard !isInstallingDriver && !isUninstallingDriver else { return }
+        isInstallingDriver = true
+        driverStatusMessage = nil
+
         DriverInstaller.install { result in
+            isInstallingDriver = false
             switch result {
             case .success:
                 appState.isDriverInstalled = true
-            case .failure:
+                driverStatusIsError = false
+                driverStatusMessage = "Driver installed. Restart any active audio apps if they do not see SoundDeck Virtual Mic."
+            case .failure(let error):
                 appState.isDriverInstalled = DriverInstaller.isInstalled
+                driverStatusIsError = true
+                driverStatusMessage = error.errorDescription ?? "Driver installation failed."
             }
         }
     }
 
     private func uninstallDriver() {
+        guard !isInstallingDriver && !isUninstallingDriver else { return }
+        isUninstallingDriver = true
+        driverStatusMessage = nil
+
         DriverInstaller.uninstall { result in
+            isUninstallingDriver = false
             switch result {
             case .success:
                 appState.isDriverInstalled = false
-            case .failure:
+                driverStatusIsError = false
+                driverStatusMessage = "Driver uninstalled. Restart any active audio apps that were using SoundDeck Virtual Mic."
+            case .failure(let error):
                 appState.isDriverInstalled = DriverInstaller.isInstalled
+                driverStatusIsError = true
+                driverStatusMessage = error.errorDescription ?? "Driver uninstall failed."
             }
         }
     }
 
     private func checkForUpdates() {
-        // In production, this calls SUUpdater.shared().checkForUpdates(self)
-        // via the Sparkle framework integration
+        guard let appDelegate = NSApplication.shared.delegate as? AppDelegate else { return }
+        appDelegate.checkForUpdates()
     }
 
     // MARK: - Helpers
@@ -472,6 +659,19 @@ struct SettingsView: View {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"
     }
 
+    private var isUpdateCheckingConfigured: Bool {
+        (NSApplication.shared.delegate as? AppDelegate)?.isUpdaterConfigured ?? false
+    }
+
+    private func syncSoundHotkeyMetadata(id: UUID, shortcut: KeyboardShortcuts.Shortcut?) {
+        guard let index = appState.sounds.firstIndex(where: { $0.id == id }) else { return }
+
+        let hotkeyName = KeyboardShortcuts.Name.forSound(id: id)
+        let storedName = shortcut == nil ? nil : hotkeyName.rawValue
+        guard appState.sounds[index].hotkeyName != storedName else { return }
+
+        appState.sounds[index].hotkeyName = storedName
+    }
 }
 
 // MARK: - Audio Device Model

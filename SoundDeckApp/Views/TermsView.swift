@@ -25,7 +25,7 @@ struct TermsView: View {
                         """
                         SoundDeck offers a free tier and a paid Pro subscription:
 
-                        \u{2022} Free Plan: Limited to 8 sounds, basic hotkeys, includes watermark audio
+                        \u{2022} Free Plan: Bundled default sounds, limited to 8 custom imported sounds, basic hotkeys, includes watermark audio
                         \u{2022} Pro Plan: Unlimited sounds, voice changer, per-sound hotkeys, Pro sound library, trim editor, no watermark
 
                         Pro subscriptions are billed monthly ($4.99/month) or yearly ($29.99/year) through the Apple App Store. Subscriptions auto-renew unless cancelled at least 24 hours before the end of the current billing period. You can manage or cancel your subscription in your Apple ID settings.

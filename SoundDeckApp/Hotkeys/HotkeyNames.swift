@@ -31,3 +31,7 @@ extension KeyboardShortcuts.Name {
         return UUID(uuidString: uuidString)
     }
 }
+
+extension Notification.Name {
+    static let keyboardShortcutsShortcutDidChange = Notification.Name("KeyboardShortcuts_shortcutByNameDidChange")
+}

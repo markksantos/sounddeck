@@ -1,4 +1,5 @@
 import AVFoundation
+import AudioToolbox
 import Combine
 import os.log
 import SoundDeckCommon
@@ -30,10 +31,11 @@ final class AudioEngineManager {
     private(set) var soundPlayer: SoundPlayer?
 
     // Voice changer wrapper
-    private(set) var voiceChanger: VoiceChanger!
+    private(set) var voiceChanger: VoiceChanger
 
     // Preview engine for local monitoring (SFX + voice)
     weak var previewEngine: PreviewEngine?
+    private weak var configuredWatermarkPlayer: WatermarkPlayer?
 
     // Metering
     private let meteringSampleCount: Int = 1024
@@ -84,6 +86,7 @@ final class AudioEngineManager {
             logger.info("Audio engine started")
         } catch {
             logger.error("Failed to start audio engine: \(error.localizedDescription)")
+            sharedMemoryWriter.cleanup()
             DispatchQueue.main.async {
                 self.appState.isEngineRunning = false
             }
@@ -116,6 +119,7 @@ final class AudioEngineManager {
 
         let inputNode = engine.inputNode
         let mainMixer = engine.mainMixerNode
+        applySelectedInputDevice(to: inputNode)
         let inputFormat = inputNode.outputFormat(forBus: 0)
 
         logger.info("Input device format: \(inputFormat.sampleRate) Hz, \(inputFormat.channelCount) ch")
@@ -130,11 +134,7 @@ final class AudioEngineManager {
         engine.connect(pitchUnit, to: mainMixer, format: inputFormat)
 
         // Build the SFX path: sfxMixerNode → mainMixer
-        let sfxFormat = AVAudioFormat(
-            standardFormatWithSampleRate: kSoundDeckSampleRate,
-            channels: AVAudioChannelCount(kSoundDeckChannelCount)
-        )!
-        engine.connect(sfxMixerNode, to: mainMixer, format: sfxFormat)
+        engine.connect(sfxMixerNode, to: mainMixer, format: outputFormat)
 
         // Create the sound player pool connected to the SFX mixer
         soundPlayer = SoundPlayer(engine: engine, mixerNode: sfxMixerNode, appState: appState)
@@ -166,7 +166,7 @@ final class AudioEngineManager {
         let outputBuf = preAllocatedOutputBuffer
         let inputBuf = preAllocatedInputBuffer
 
-        sinkNode = AVAudioSinkNode { timestamp, frameCount, inputData -> OSStatus in
+        let sinkNode = AVAudioSinkNode { timestamp, frameCount, inputData -> OSStatus in
             let ablPointer = UnsafeMutableAudioBufferListPointer(UnsafeMutablePointer(mutating: inputData))
 
             guard let firstBuffer = ablPointer.first,
@@ -180,7 +180,15 @@ final class AudioEngineManager {
                 // Reuse pre-allocated buffers (RT-safe, no heap allocation)
                 convertedBuffer.frameLength = 0
                 inputPCM.frameLength = frameCount
-                if let destData = inputPCM.floatChannelData?[0] {
+                if let channelData = inputPCM.floatChannelData {
+                    let targetChannelCount = Int(inputPCM.format.channelCount)
+                    for channel in 0..<targetChannelCount {
+                        let sourceIndex = min(channel, ablPointer.count - 1)
+                        guard sourceIndex >= 0,
+                              let sourceData = ablPointer[sourceIndex].mData else { continue }
+                        memcpy(channelData[channel], sourceData, Int(frameCount) * MemoryLayout<Float>.size)
+                    }
+                } else if let destData = inputPCM.floatChannelData?[0] {
                     memcpy(destData, srcData, Int(frameCount) * MemoryLayout<Float>.size)
                 }
 
@@ -210,8 +218,9 @@ final class AudioEngineManager {
             return noErr
         }
 
-        engine.attach(sinkNode!)
-        engine.connect(mainMixer, to: sinkNode!, format: mixerOutputFormat)
+        self.sinkNode = sinkNode
+        engine.attach(sinkNode)
+        engine.connect(mainMixer, to: sinkNode, format: mixerOutputFormat)
 
         // Install metering tap
         installMeteringTap()
@@ -220,7 +229,7 @@ final class AudioEngineManager {
         installVoiceMonitorTap()
 
         // Apply current voice changer state
-        if appState.isVoiceChangerEnabled {
+        if appState.isVoiceChangerActive {
             voiceChanger.pitchCents = appState.pitchShiftCents
             voiceChanger.enable()
         } else {
@@ -312,8 +321,33 @@ final class AudioEngineManager {
         sharedMemoryWriter.setMuted(muted)
     }
 
+    private func applySelectedInputDevice(to inputNode: AVAudioInputNode) {
+        guard let deviceID = appState.selectedInputDeviceID, deviceID != 0 else { return }
+        guard let audioUnit = inputNode.audioUnit else {
+            logger.warning("Input node has no audio unit, cannot apply selected input device")
+            return
+        }
+
+        var selectedDeviceID = deviceID
+        let status = AudioUnitSetProperty(
+            audioUnit,
+            kAudioOutputUnitProperty_CurrentDevice,
+            kAudioUnitScope_Global,
+            0,
+            &selectedDeviceID,
+            UInt32(MemoryLayout<AudioDeviceID>.size)
+        )
+
+        if status != noErr {
+            logger.error("Failed to set selected input device \(deviceID): \(status)")
+        } else {
+            logger.info("Selected input device applied: \(deviceID)")
+        }
+    }
+
     /// Configures a WatermarkPlayer with this engine's audio graph.
     func configureWatermark(_ watermarkPlayer: WatermarkPlayer) {
+        configuredWatermarkPlayer = watermarkPlayer
         watermarkPlayer.configure(engine: engine, mixerNode: sfxMixerNode)
     }
 
@@ -370,11 +404,13 @@ final class AudioEngineManager {
             }
             .store(in: &cancellables)
 
-        // Observe voice changer toggle
-        appState.$isVoiceChangerEnabled
+        // Observe voice changer entitlement and toggle together.
+        appState.$isPro
+            .combineLatest(appState.$isVoiceChangerEnabled)
+            .map { isPro, enabled in isPro && enabled }
             .removeDuplicates()
-            .sink { [weak self] enabled in
-                if enabled {
+            .sink { [weak self] active in
+                if active {
                     self?.voiceChanger.enable()
                 } else {
                     self?.voiceChanger.disable()
@@ -388,6 +424,22 @@ final class AudioEngineManager {
             .sink { [weak self] enabled in
                 if !enabled {
                     self?.previewEngine?.stopVoiceMonitor()
+                }
+            }
+            .store(in: &cancellables)
+
+        // Rebuild the graph when the user selects a different microphone input.
+        appState.$selectedInputDeviceID
+            .removeDuplicates()
+            .dropFirst()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                guard let self = self, self.engine.isRunning else { return }
+                let watermarkPlayer = self.configuredWatermarkPlayer
+                self.stop()
+                self.start()
+                if let watermarkPlayer {
+                    self.configureWatermark(watermarkPlayer)
                 }
             }
             .store(in: &cancellables)

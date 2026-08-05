@@ -209,19 +209,44 @@ func uninstall() -> Int32 {
     return 0
 }
 
+// MARK: - Status
+
+func status() -> Int32 {
+    printStatus("Checking SoundDeck virtual audio driver status...")
+
+    if FileManager.default.fileExists(atPath: installPath) {
+        printStatus("Installed: yes")
+        printStatus("Install path: \(installPath)")
+    } else {
+        printStatus("Installed: no")
+        printStatus("Expected install path: \(installPath)")
+    }
+
+    if let sourcePath = findDriverBundle() {
+        printStatus("Bundled driver candidate: \(sourcePath)")
+    } else {
+        printStatus("Bundled driver candidate: not found next to installer")
+    }
+
+    return 0
+}
+
 // MARK: - Main
 
 func printUsage() {
     print("""
     SoundDeck Driver Installer
 
-    Usage: sudo SoundDeckInstaller <command>
+    Usage: SoundDeckInstaller <command>
 
     Commands:
       install     Install the virtual audio driver and restart coreaudiod
       uninstall   Remove the virtual audio driver and restart coreaudiod
+      status      Print installation status and bundled driver discovery
 
-    This tool must be run as root (use sudo).
+    install and uninstall must be run as root:
+      sudo SoundDeckInstaller install
+      sudo SoundDeckInstaller uninstall
     """)
 }
 
@@ -235,7 +260,17 @@ func main() -> Int32 {
 
     let command = args[1].lowercased()
 
-    // Check for root privileges
+    switch command {
+    case "-h", "--help", "help":
+        printUsage()
+        return 0
+    case "status":
+        return status()
+    default:
+        break
+    }
+
+    // Mutating commands require root privileges.
     guard isRunningAsRoot() else {
         printError("This tool must be run as root.")
         printError("Usage: sudo \(args[0]) \(command)")
@@ -247,9 +282,6 @@ func main() -> Int32 {
         return install()
     case "uninstall":
         return uninstall()
-    case "-h", "--help", "help":
-        printUsage()
-        return 0
     default:
         printError("Unknown command: '\(command)'")
         printUsage()

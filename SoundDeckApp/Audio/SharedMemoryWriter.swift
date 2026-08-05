@@ -52,7 +52,7 @@ final class SharedMemoryWriter {
 
         // Memory-map the region
         let mapped = mmap(nil, totalSize, PROT_READ | PROT_WRITE, MAP_SHARED, shmFD, 0)
-        guard mapped != MAP_FAILED else {
+        guard let mapped, mapped != MAP_FAILED else {
             logger.error("mmap failed: \(String(cString: strerror(errno)))")
             closeFileDescriptor()
             return false
@@ -60,7 +60,7 @@ final class SharedMemoryWriter {
 
         mappedMemory = mapped
         mappedSize = totalSize
-        buffer = mapped!.assumingMemoryBound(to: SharedAudioBuffer.self)
+        buffer = mapped.assumingMemoryBound(to: SharedAudioBuffer.self)
 
         // Initialize the ring buffer header and zero the audio data
         RingBuffer_Init(

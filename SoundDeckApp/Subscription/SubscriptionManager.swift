@@ -88,6 +88,10 @@ final class SubscriptionManager: ObservableObject {
     // MARK: - Restore
 
     func restorePurchases() async {
+        await MainActor.run {
+            purchaseError = nil
+        }
+
         do {
             try await AppStore.sync()
             await updateEntitlementStatus()

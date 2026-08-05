@@ -43,8 +43,6 @@ static const AudioObjectID kObjectID_Stream_Input   = 3;
 static const AudioObjectID kObjectID_Volume_Control = 4;
 static const AudioObjectID kObjectID_Mute_Control   = 5;
 
-static const UInt32 kNumObjects = 4; // device, stream, volume, mute
-
 // The plugin type UUID from Info.plist / SharedAudioConstants.h
 // 443ABAB8-E7B3-491A-B985-BEB9187030DB
 static const REFIID kSoundDeckDriver_PluginTypeUUID =
@@ -1679,7 +1677,7 @@ static OSStatus SoundDeck_DoIOOperation(AudioServerPlugInDriverRef inDriver,
     // Read from the shared ring buffer
     SharedAudioBuffer* shm = sDriverState->sharedBuffer;
     if (shm != nullptr) {
-        UInt32 framesRead = RingBuffer_Read(shm, outBuffer, framesToRead);
+        RingBuffer_Read(shm, outBuffer, framesToRead);
         // RingBuffer_Read already zero-fills on underrun
 
         // Apply volume and mute

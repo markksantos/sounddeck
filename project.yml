@@ -49,6 +49,7 @@ targets:
         COMBINE_HIDPI_IMAGES: true
         HEADER_SEARCH_PATHS: "$(SRCROOT)/SoundDeckCommon/include"
         SWIFT_INCLUDE_PATHS: "$(SRCROOT)/SoundDeckCommon/include"
+        SPARKLE_PUBLIC_ED_KEY: ""
     entitlements:
       path: SoundDeckApp/SoundDeck.entitlements
       properties:

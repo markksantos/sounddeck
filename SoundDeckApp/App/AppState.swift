@@ -51,13 +51,39 @@ final class AppState: ObservableObject {
     }
 
     // MARK: - Feature Gates
+    private static let bundledDefaultSoundFileNames: Set<String> = [
+        "alarm.wav",
+        "applause.wav",
+        "baby_cry.wav",
+        "dog_bark.wav",
+        "doorbell.wav",
+        "hold_music.wav",
+        "laugh_track.wav",
+        "phone_ring.wav",
+        "silence.wav",
+        "static.wav",
+        "traffic.wav",
+        "uh_huh_1.wav",
+        "uh_huh_2.wav",
+        "uh_huh_3.wav"
+    ]
+
     var canUseVoiceChanger: Bool { isPro }
     var canUsePerSoundHotkeys: Bool { isPro }
     var canUseTrimEditor: Bool { isPro }
     var canAccessProLibrary: Bool { isPro }
     var showWatermark: Bool { !isPro }
     var maxFreeSounds: Int { 8 }
-    var canAddMoreSounds: Bool { isPro || sounds.count < maxFreeSounds }
+    var customSoundCount: Int {
+        sounds.filter { !Self.isBundledDefaultSound($0) }.count
+    }
+    var canAddMoreSounds: Bool { isPro || customSoundCount < maxFreeSounds }
+    var isVoiceChangerActive: Bool { canUseVoiceChanger && isVoiceChangerEnabled }
+
+    static func isBundledDefaultSound(_ sound: SoundItem) -> Bool {
+        let fileName = sound.fileName.split(separator: "/").last.map(String.init) ?? sound.fileName
+        return bundledDefaultSoundFileNames.contains(fileName)
+    }
 
     // MARK: - Debug
     #if DEBUG

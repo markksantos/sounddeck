@@ -2,54 +2,66 @@
 
 import AnimateIn from "./AnimateIn";
 import { Check } from "@phosphor-icons/react";
-
-const features = [
-  "Virtual microphone device",
-  "Unlimited sound effects",
-  "Voice changer & effects",
-  "Global hotkey support",
-  "All future updates included",
-  "macOS Ventura & later",
-];
+import { freePlanFeatures, proPlanFeatures } from "@/lib/content";
+import { siteConfig } from "@/lib/site";
 
 export default function Pricing() {
   return (
-    <section id="pricing" className="py-[120px] px-6">
-      <div className="max-w-md mx-auto">
-        <AnimateIn>
-          <div className="glass rounded-3xl p-10 text-center shadow-xl shadow-black/5">
-            <p className="text-sm font-semibold text-accent uppercase tracking-wider mb-4">
-              One-Time Purchase
-            </p>
-            <div className="mb-2">
-              <span className="text-6xl font-bold tracking-tight">$29</span>
-            </div>
-            <p className="text-foreground/50 mb-8">
-              No subscription. No recurring fees. Ever.
-            </p>
+    <section id="pricing" className="section section-paper">
+      <div className="section-inner pricing-inner">
+        <AnimateIn className="section-heading">
+          <p className="eyebrow">Pricing</p>
+          <h2>Start free. Upgrade when SoundDeck becomes part of your show.</h2>
+          <p>
+            The app includes a free plan for setup and core use. Pro unlocks the
+            faster production controls inside the Mac app.
+          </p>
+        </AnimateIn>
 
-            <ul className="text-left space-y-3 mb-10">
-              {features.map((f) => (
-                <li key={f} className="flex items-center gap-3">
-                  <Check
-                    weight="bold"
-                    className="w-5 h-5 text-accent flex-shrink-0"
-                  />
-                  <span className="text-[15px]">{f}</span>
+        <div className="pricing-grid">
+          <AnimateIn className="pricing-card">
+            <p className="price-label">Free</p>
+            <div className="price-row">$0</div>
+            <p className="price-note">Try the virtual mic and starter library.</p>
+            <ul>
+              {freePlanFeatures.map((feature) => (
+                <li key={feature}>
+                  <Check weight="bold" />
+                  <span>{feature}</span>
                 </li>
               ))}
             </ul>
-
-            <a
-              href="https://lemonsqueezy.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block w-full py-4 rounded-full bg-accent text-white font-semibold text-base hover:bg-accent/90 transition-colors"
-            >
-              Buy SoundDeck — $29
+            <a className="button button-ghost full" href={siteConfig.downloadUrl}>
+              Download free
             </a>
-          </div>
-        </AnimateIn>
+          </AnimateIn>
+
+          <AnimateIn delay={0.1} className="pricing-card featured">
+            <p className="price-label">SoundDeck Pro</p>
+            <div className="price-row">{siteConfig.priceYearly}</div>
+            <p className="price-note">
+              Annual plan. Monthly option from {siteConfig.priceMonthly}/mo in app.
+            </p>
+            <ul>
+              {proPlanFeatures.map((feature) => (
+                <li key={feature}>
+                  <Check weight="bold" />
+                  <span>{feature}</span>
+                </li>
+              ))}
+            </ul>
+            <a className="button button-primary full" href={siteConfig.checkoutUrl}>
+              Upgrade to Pro
+            </a>
+            <a className="button button-ghost full" href="/pricing">
+              Compare plans
+            </a>
+            <p className="refund-note">
+              Need help before subscribing? Email support for setup guidance and
+              refund handling details.
+            </p>
+          </AnimateIn>
+        </div>
       </div>
     </section>
   );

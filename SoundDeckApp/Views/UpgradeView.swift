@@ -9,6 +9,10 @@ struct UpgradeView: View {
 
     @State private var selectedPlan: Plan = .yearly
     @State private var isPurchasing = false
+    @State private var isLoadingProducts = false
+    @State private var hasLoadedProducts = false
+    @State private var monthlyProduct: Product?
+    @State private var yearlyProduct: Product?
     @State private var errorMessage: String?
 
     enum Plan: String, CaseIterable {
@@ -62,6 +66,17 @@ struct UpgradeView: View {
                             .padding(.top, 6)
                     }
 
+                    if shouldShowProductRetry {
+                        Button {
+                            loadProducts()
+                        } label: {
+                            Text("Retry")
+                                .font(.system(size: 12, weight: .medium))
+                        }
+                        .buttonStyle(.bordered)
+                        .padding(.top, 8)
+                    }
+
                     // Restore link
                     Button {
                         restorePurchases()
@@ -79,6 +94,9 @@ struct UpgradeView: View {
         }
         .frame(width: 420, height: 520)
         .background(Color(nsColor: .windowBackgroundColor))
+        .onAppear {
+            loadProducts()
+        }
     }
 
     // MARK: - Header
@@ -278,7 +296,7 @@ struct UpgradeView: View {
                         .frame(maxWidth: .infinity)
                         .frame(height: 20)
                 } else {
-                    Text("Subscribe \(selectedPlan == .monthly ? monthlyPriceString + "/mo" : yearlyPriceString + "/yr")")
+                    Text(purchaseButtonTitle)
                         .font(.system(size: 14, weight: .semibold))
                         .frame(maxWidth: .infinity)
                 }
@@ -295,19 +313,56 @@ struct UpgradeView: View {
                         )
                     )
             )
+            .opacity(canPurchase ? 1.0 : 0.65)
         }
         .buttonStyle(.plain)
-        .disabled(isPurchasing)
+        .disabled(!canPurchase)
     }
 
     // MARK: - Price Helpers
 
     private var monthlyPriceString: String {
-        subscriptionManager?.monthlyProduct?.displayPrice ?? "$4.99"
+        productPriceString(monthlyProduct)
     }
 
     private var yearlyPriceString: String {
-        subscriptionManager?.yearlyProduct?.displayPrice ?? "$29.99"
+        productPriceString(yearlyProduct)
+    }
+
+    private func productPriceString(_ product: Product?) -> String {
+        if let product {
+            return product.displayPrice
+        }
+        return hasLoadedProducts ? "Unavailable" : "Loading"
+    }
+
+    private var selectedProduct: Product? {
+        switch selectedPlan {
+        case .monthly:
+            monthlyProduct
+        case .yearly:
+            yearlyProduct
+        }
+    }
+
+    private var canPurchase: Bool {
+        !isPurchasing && !isLoadingProducts && selectedProduct != nil
+    }
+
+    private var purchaseButtonTitle: String {
+        if isLoadingProducts {
+            return "Loading pricing..."
+        }
+
+        guard selectedProduct != nil else {
+            return "Subscription unavailable"
+        }
+
+        return "Subscribe \(selectedPlan == .monthly ? monthlyPriceString + "/mo" : yearlyPriceString + "/yr")"
+    }
+
+    private var shouldShowProductRetry: Bool {
+        hasLoadedProducts && !isLoadingProducts && monthlyProduct == nil && yearlyProduct == nil
     }
 
     // MARK: - SubscriptionManager Access
@@ -318,22 +373,40 @@ struct UpgradeView: View {
 
     // MARK: - Actions
 
+    private func loadProducts() {
+        guard let manager = subscriptionManager else {
+            errorMessage = "Unable to access subscription manager."
+            return
+        }
+        guard !isLoadingProducts else { return }
+
+        isLoadingProducts = true
+        errorMessage = nil
+
+        Task {
+            await manager.loadProducts()
+            await MainActor.run {
+                monthlyProduct = manager.monthlyProduct
+                yearlyProduct = manager.yearlyProduct
+                hasLoadedProducts = true
+                isLoadingProducts = false
+
+                if monthlyProduct == nil && yearlyProduct == nil {
+                    errorMessage = "Subscriptions are not available right now. Check your connection and try again."
+                }
+            }
+        }
+    }
+
     private func purchase() {
         guard let manager = subscriptionManager else {
             errorMessage = "Unable to access subscription manager."
             return
         }
 
-        let product: Product?
-        switch selectedPlan {
-        case .monthly:
-            product = manager.monthlyProduct
-        case .yearly:
-            product = manager.yearlyProduct
-        }
-
-        guard let product else {
-            errorMessage = "Products not available. Please try again later."
+        guard let product = selectedProduct else {
+            errorMessage = "Subscriptions are not available right now. Check your connection and try again."
+            loadProducts()
             return
         }
 
@@ -392,13 +465,13 @@ private struct FeatureRow: Identifiable {
 }
 
 private let features: [FeatureRow] = [
-    FeatureRow(name: "Sound slots", freeValue: .text("8"), proValue: .text("Unlimited")),
+    FeatureRow(name: "Bundled defaults", freeValue: .check, proValue: .check),
     FeatureRow(name: "Voice changer", freeValue: .cross, proValue: .check),
     FeatureRow(name: "Per-sound hotkeys", freeValue: .cross, proValue: .check),
     FeatureRow(name: "Watermark beep", freeValue: .text("Yes"), proValue: .text("None")),
     FeatureRow(name: "Pro sound library", freeValue: .cross, proValue: .check),
     FeatureRow(name: "Trim editor", freeValue: .cross, proValue: .check),
-    FeatureRow(name: "Custom import", freeValue: .text("8 max"), proValue: .text("Unlimited")),
+    FeatureRow(name: "Custom imports", freeValue: .text("8 max"), proValue: .text("Unlimited")),
     FeatureRow(name: "Basic hotkeys (mute/stop)", freeValue: .check, proValue: .check),
 ]
 

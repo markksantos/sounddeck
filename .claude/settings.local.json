@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xcodebuild -project SoundDeck.xcodeproj -scheme SoundDeckApp -configuration Debug build)",
+      "Bash(xcodebuild -project SoundDeck.xcodeproj -list)",
+      "Bash(xcodebuild -project SoundDeck.xcodeproj -scheme SoundDeck -configuration Debug -destination 'platform=macOS' build)",
+      "Bash(open:*)",
+      "Bash(grep -r \"TODO\\\\|FIXME\\\\|HACK\\\\|BUG\\\\|XXX\" /Users/markksantos/Developer/sounddeck --include=*.swift --include=*.cpp --include=*.h --include=*.c)",
+      "Bash(xcodebuild -project SoundDeck.xcodeproj -scheme SoundDeck -configuration Debug -destination 'platform=macOS' test)",
+      "Bash(pkill -x SoundDeck)",
+      "mcp__nano-banana__generate_image",
+      "Bash(xcodegen --version)",
+      "Bash(xcodegen generate:*)",
+      "Bash(cp:*)"
+    ]
+  }
+}
